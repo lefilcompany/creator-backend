@@ -1,0 +1,17 @@
+// Esse é o arquivo de configuração do Prisma, onde você define 
+// os modelos de dados da sua aplicação.
+// Ao rodar uma migration, seu banco de dados será modelado a partir desses modelos.
+// Por fim, você poderá acessar esses modelos através do Prisma Client.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Example {
+  id      Int    @id @default(autoincrement())
+  message String
+}
