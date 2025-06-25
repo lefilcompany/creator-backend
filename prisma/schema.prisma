@@ -11,7 +11,268 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Example {
-  id      Int    @id @default(autoincrement())
-  message String
+model User {
+  id         Int       @id @default(autoincrement()) // Identificador único do usuário
+  userName   String    
+  email      String    @unique                     
+  password   String                                
+  cityUser   String                               
+  stateUser  String                               
+  roleUser   Int                                   
+  teamId     Int                                   
+  createdAt  DateTime  @default(now())             
+  updatedAt  DateTime  @default(now())            
+  isDeleted  Int       @default(0)      
+
+  stripeCustomerId    String?          @unique
+  payments            Payment[]
+  invoices            Invoice[]
+  subscriptions       Subscription[]           
+
+  // Relacionamentos
+  role       Permission @relation(fields: [roleUser], references: [id])
+  team       Team       @relation(fields: [teamId], references: [id])
+
+  contents  Content[] // Relacionamento com conteúdos criados pelo usuário
+  planning  Planning[] // Relacionamento com planejamentos criados pelo usuário
+  reviews   Review[]   // Relacionamento com revisões criadas pelo usuário
+}
+
+model Permission {
+  id         Int     @id @default(autoincrement())  // Identificador único das permissões
+  permission String                                 // Nome da role (ex: adminCreator, teamAdmin, etc.)
+  value      Int                                    // Valor da role da permissão                  
+
+  users      User[]                                 // Relacionamento inverso com usuários
+}
+
+model Team {
+  id         Int      @id @default(autoincrement()) // Identificador da equipe
+  nameTeam   String                                 // Nome da equipe
+  accessCode String   @unique                       // Código de acesso da equipe
+  createdAt  DateTime @default(now())               // Data de criação
+  updatedAt  DateTime @default(now())               // Data de atualização
+  isDeleted  Int      @default(0)                   // Flag de exclusão lógica
+
+  users      User[]                                 // Relacionamento com usuários
+  teamPlans  TeamPlan[]                             // Relacionamento com planos de equipe
+  brands     Brand[]                                // Relacionamento com marcas
+  themes     Theme[]                                 // Relacionamento com temas
+  personas   Persona[]                              // Relacionamento com personas
+  contents   Content[]                              // Relacionamento com conteúdos
+  planning   Planning[]                            // Relacionamento com planejamentos
+  reviews    Review[]                               // Relacionamento com revisões
+}
+
+model Plan {
+  id             Int      @id @default(autoincrement()) // Identificador único do plano
+  name           String                                 // Nome do plano
+  price          Decimal   @db.Decimal(10, 2)           // Preço mensal
+
+  membersLimit   Int                                     // Limite de membros
+  brandsLimit    Int                                     // Limite de marcas
+  themesLimit    Int                                     // Limite de temas estratégicos
+  personasLimit  Int                                     // Limite de personas
+  contentLimit   Int                                     // Limite de conteúdos criados
+  planningLimit  Int                                     // Limite de planejamentos de conteúdo
+  reviewLimit    Int                                     // Limite de revisões de conteúdo
+
+  createdAt      DateTime @default(now())               // Data de criação do plano
+  updatedAt      DateTime @default(now())               // Data de atualização do plano
+  isDeleted      Int      @default(0)                   // Flag de exclusão lógica
+
+  teamPlans     TeamPlan[]                             // Relacionamento com planos de equipe
+}
+
+model Brand {
+  id         Int      @id @default(autoincrement()) // ID da marca
+  name       String                                 // Nome da marca
+  teamId     Int                                    // ID da equipe responsável pela marca
+  createdAt  DateTime @default(now())               // Data de criação da marca
+  updatedAt  DateTime @default(now())               // Data de atualização da marca
+  isDeleted  Int      @default(0)                   // Flag para indicar exclusão lógica
+
+  team       Team     @relation(fields: [teamId], references: [id])
+
+  themes     Theme[]  // Relacionamento com temas
+  personas   Persona[] // Relacionamento com personas
+  contents   Content[] // Relacionamento com conteúdos
+  planning   Planning[] // Relacionamento com planejamentos
+  reviews    Review[]  // Relacionamento com revisões
+}
+
+model Theme {
+  id             Int      @id @default(autoincrement()) // Identificador único do tema
+  brandId        Int      
+  teamId         Int      
+  title          String                                  // Título do tema
+  description    String   @db.VarChar(512)               // Descrição
+  colors         String                                  // Paleta de cores
+  voiceAI        String                                  // Tom de voz da IA
+  universeTarget String                                  // Público/Universo alvo
+  hashtags       String                                  // Hashtags
+  objectives     String   @db.VarChar(512)               // Objetivos do tema
+  addInfo        String   @db.Text                       // Informações adicionais
+
+  createdAt      DateTime @default(now())                // Data de criação
+  updatedAt      DateTime @default(now())                // Data de atualização
+  isDeleted      Int      @default(0)                    // Flag de exclusão lógica
+
+  brand          Brand    @relation(fields: [brandId], references: [id]) // Marca relacionada
+  team           Team     @relation(fields: [teamId], references: [id])  // Equipe relacionada
+  contents       Content[]  // Relacionamento com conteúdos
+  planning       Planning[]  // Relacionamento com planejamentos
+}
+
+model Persona {
+  id              Int      @id @default(autoincrement()) // Identificador único da persona
+  brandId         Int      
+  teamId          Int
+  name            String                                 // Nome da persona
+  gender          String                                 // Gênero
+  age             String                                 // Idade
+  location        String                                 // Localização
+  positionDegree  String   @db.VarChar(512)              // Cargo e formação acadêmica
+  hobbies         String   @db.VarChar(512)              // Hobbies e interesses
+  consumeHabit    String   @db.VarChar(512)              // Hábitos de consumo
+  goals           String   @db.VarChar(512)              // Metas e objetivos
+  challenge       String   @db.VarChar(512)              // Desafios enfrentados
+
+  createdAt       DateTime @default(now())               // Data de criação
+  updatedAt       DateTime @default(now())               // Data de atualização
+  isDeleted       Int      @default(0)                   // Exclusão lógica (0 = ativa)
+
+  brand           Brand    @relation(fields: [brandId], references: [id]) // Marca relacionada
+  team            Team     @relation(fields: [teamId], references: [id])  // Equipe relacionada
+  contents        Content[] // Relacionamento com conteúdos
+}
+
+model Content {
+  id              Int      @id @default(autoincrement()) // ID do conteúdo
+  userId          Int      
+  teamId          Int      
+  brandId         Int
+  themeId         Int      
+  personaId       Int?
+  microResult     String                                 // Micro-resultados esperados
+  mainMessage     String                                 // Mensagem principal em 3s
+  feeling         String   @db.VarChar(512)              // Sentimento transmitido
+  format          String   @db.VarChar(512)              // Formato ideal para o conteúdo
+  nextStep        String                                 // Próximo passo para o usuário
+  isPromote       Int                                    // 0 = não impulsionado, 1 = sim
+  visualReference Int                                    // 0 = não, 1 = sim
+  responseAI      String                                 // Resposta da IA
+  createdAt       DateTime @default(now())               // Data de criação
+  updatedAt       DateTime @default(now())               // Data de atualização
+  isDeleted       Int      @default(0)                   // 0 = ativo, 1 = deletado
+
+  user            User     @relation(fields: [userId], references: [id])
+  team            Team     @relation(fields: [teamId], references: [id])
+  brand           Brand    @relation(fields: [brandId], references: [id])
+  theme           Theme    @relation(fields: [themeId], references: [id])
+  persona         Persona? @relation(fields: [personaId], references: [id])
+}
+
+model Planning {
+  id          Int      @id @default(autoincrement()) // ID do planejamento
+  userId      Int                                     
+  brandId     Int
+  themeId     Int
+  teamId      Int
+  platform    String   @db.VarChar(255)              // Plataformas foco do planejamento
+  postsNumber Int                                   // Quantidade de posts planejados
+  addInfo     String                                 // Informações adicionais
+  responseAI  String                                 // Resposta da IA
+  createdAt   DateTime @default(now())              // Data de criação
+  updatedAt   DateTime @default(now())              // Data de atualização
+  isDeleted   Int      @default(0)                  // Exclusão lógica: 0 = ativo, 1 = deletado
+
+  user        User     @relation(fields: [userId], references: [id])
+  brand       Brand    @relation(fields: [brandId], references: [id])
+  theme       Theme    @relation(fields: [themeId], references: [id])
+  team        Team     @relation(fields: [teamId], references: [id])
+}
+
+model Review {
+  id          Int      @id @default(autoincrement()) // ID da revisão
+  userId      Int
+  brandId     Int
+  teamId      Int
+  iaText      String                                 // Prompt para explicação da imagem
+  responseAI  String                                 // Resposta da IA
+  createdAt   DateTime @default(now())               // Data de criação
+  updatedAt   DateTime @default(now())               // Data de atualização
+  isDeleted   Int      @default(0)                   // Exclusão lógica: 0 = ativo, 1 = deletado
+
+  user        User     @relation(fields: [userId], references: [id])
+  brand       Brand    @relation(fields: [brandId], references: [id])
+  team        Team     @relation(fields: [teamId], references: [id])
+}
+
+model TeamPlan {
+  id         Int      @id @default(autoincrement()) // ID do relacionamento
+  teamId     Int
+  planId     Int
+  endDate    DateTime                              // Data de fim da assinatura
+  createdAt  DateTime @default(now())              // Data de início da assinatura
+  updatedAt  DateTime @default(now())              // Data de atualização
+  isDeleted  Int      @default(0)                  // Exclusão lógica (0 = ativo, 1 = deletado)
+
+  team       Team     @relation(fields: [teamId], references: [id])
+  plan       Plan     @relation(fields: [planId], references: [id])
+}
+
+model Payment {
+  id                  Int              @id @default(autoincrement()) 
+  user                User             @relation(fields: [userId], references: [id])
+  userId              Int
+  stripePaymentIntent String           @unique
+  stripeChargeId      String?
+  amount              Decimal
+  currency            String
+  status              String
+  paymentMethod       String?
+  description         String?
+  createdAt           DateTime         @default(now())
+  paidAt              DateTime?
+  receiptUrl          String?
+  refunded            Int              @default(0)
+  refunds             Refund[]
+  invoice             Invoice?
+}
+
+model Refund {
+  id                  Int              @id @default(autoincrement())
+  paymentId           Int
+  payment             Payment          @relation(fields: [paymentId], references: [id])
+  stripeRefundId      String           @unique
+  amount              Decimal
+  reason              String?
+  refundedAt          DateTime         @default(now())
+}
+
+model Invoice {
+  id                  Int              @id @default(autoincrement())
+  user                User             @relation(fields: [userId], references: [id])
+  userId              Int
+  stripeInvoiceId     String           @unique
+  payment             Payment?         @relation(fields: [paymentId], references: [id])
+  paymentId           Int?             @unique
+  amountDue           Decimal
+  amountPaid          Decimal
+  status              String
+  dueDate             DateTime?
+  createdAt           DateTime         @default(now())
+}
+
+model Subscription {
+  id                  Int           @id @default(autoincrement())
+  user                User             @relation(fields: [userId], references: [id])
+  userId              Int
+  stripeSubscriptionId String          @unique
+  planName            String
+  status              String
+  startedAt           DateTime
+  currentPeriodEnd    DateTime
+  canceledAt          DateTime?
 }
