@@ -1,0 +1,111 @@
+import { PrismaClient } from "@prisma/client";
+import UserModel, { UserModelInterface } from "../models/userModel";
+
+class UserRepository {
+    private client: PrismaClient;
+    private static instance: UserRepository;
+
+    private constructor() {
+        this.client = new PrismaClient();
+    }
+
+    public static get(): UserRepository {
+        if (!UserRepository.instance) {
+            UserRepository.instance = new UserRepository();
+        }
+        return UserRepository.instance;
+    }
+
+    async getAllUsers(): Promise<UserModelInterface[]> {
+        const listUsers = await this.client.user.findMany();
+        return listUsers;
+    }
+
+    async getAllUsersActive(): Promise<UserModelInterface[]> {
+        const usersActive = await this.client.user.findMany({
+            where: {
+                isDeleted: 0,
+            },
+        });
+        return usersActive;
+    }
+
+    async getUserById(id: number): Promise<UserModelInterface | null> {
+        const user = await this.client.user.findUnique({
+            where: {
+                id: Number(id),
+            },
+        });
+        return user;
+    }
+
+    async getUsersByTeamId(teamId: number): Promise<UserModelInterface[]> {
+        const users = await this.client.user.findMany({
+            where: {
+                teamId: Number(teamId)
+            },
+        });
+        return users;
+    }
+
+    async getUsersByTeamIdActive(teamId: number): Promise<UserModelInterface[]> {
+        const users = await this.client.user.findMany({
+            where: {
+                teamId: Number(teamId),
+                isDeleted: 0,
+            },
+        });
+        return users;
+    }
+
+    async createUser(user: UserModel): Promise<UserModelInterface> {
+        const newUser = await this.client.user.create({
+            data: {
+                userName: user.getUsername(),
+                email: user.getEmail(),
+                password: user.getPassword(),
+                cityUser: user.getCityUser(),
+                stateUser: user.getStateUser(),
+                roleUser: user.getRoleUser(),
+                teamId: user.getTeamId(),
+                isDeleted: user.getIsDeleted(),
+                stripeCustomerId: user.getStripeCustomerId(),
+            }
+        });
+        return newUser;
+    }
+
+    async updateUser(user: UserModel): Promise<UserModelInterface | null> {
+        const updatedUser = await this.client.user.update({
+            where: {
+                id: user.getId(),
+            },
+            data: {
+                userName: user.getUsername(),
+                email: user.getEmail(),
+                password: user.getPassword(),
+                cityUser: user.getCityUser(),
+                stateUser: user.getStateUser(),
+                roleUser: user.getRoleUser(),
+                teamId: user.getTeamId(),
+                isDeleted: user.getIsDeleted(),
+                stripeCustomerId: user.getStripeCustomerId(),
+            }
+        });
+        return updatedUser;
+    }
+
+    async deleteUser(id: number): Promise<UserModelInterface | null> {
+        const deletedUser = await this.client.user.update({
+            where: {
+                id: Number(id),
+            },
+            data: {
+                isDeleted: 1,
+            }
+        });
+        return deletedUser;
+    }
+}
+
+export default UserRepository;
