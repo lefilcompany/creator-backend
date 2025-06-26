@@ -18,10 +18,10 @@ model User {
   password   String                                
   cityUser   String                               
   stateUser  String                               
-  roleUser   Int                                   
-  teamId     Int                                   
+  roleUser   Int?                                   
+  teamId     Int?                                   
   createdAt  DateTime  @default(now())             
-  updatedAt  DateTime  @default(now())            
+  updatedAt  DateTime  @updatedAt            
   isDeleted  Int       @default(0)      
 
   stripeCustomerId    String?          @unique
@@ -30,8 +30,8 @@ model User {
   subscriptions       Subscription[]           
 
   // Relacionamentos
-  role       Permission @relation(fields: [roleUser], references: [id])
-  team       Team       @relation(fields: [teamId], references: [id])
+  role       Permission? @relation(fields: [roleUser], references: [id])
+  team       Team?       @relation(fields: [teamId], references: [id])
 
   contents  Content[] // Relacionamento com conteúdos criados pelo usuário
   planning  Planning[] // Relacionamento com planejamentos criados pelo usuário
