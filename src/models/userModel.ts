@@ -21,6 +21,7 @@ class UserModel {
         stateUser: string,
         roleUser: number | null,
         teamId: number | null,
+        isDeleted?: number,
         stripeCustomerId?: string | null,
         updatedAt: Date | null = null
     ) {
@@ -53,7 +54,7 @@ class UserModel {
 
         this.roleUser = roleUser;
         this.teamId = teamId;
-        this.isDeleted = 0;
+        this.isDeleted = isDeleted ?? 0;
         this.stripeCustomerId = stripeCustomerId ?? null;
         this.createdAt = new Date();
         this.updatedAt = updatedAt;

@@ -25,7 +25,7 @@ export class UpdateUser implements Service {
         return UpdateUser.instance;
     }
 
-    public async execute({user}: UpdateUserInput): Promise<UpdateUserOutput> {
+    public async execute({ user }: UpdateUserInput): Promise<UpdateUserOutput> {
         const userObj = new UserModel(
             user.id,
             user.userName,
@@ -35,13 +35,14 @@ export class UpdateUser implements Service {
             user.stateUser,
             user.roleUser,
             user.teamId,
+            user.isDeleted ?? 0,                           // <- mantém ou define como ativo
             user.stripeCustomerId ?? null,
-            user.updatedAt ?? new Date() // ← Aqui garantimos a atualização
+            new Date()                                     // <- sempre atualiza o updatedAt
         );
 
         const updatedUser = await this.repository.updateUser(userObj);
         return {
             user: updatedUser
-        }
+        };
     }
 }

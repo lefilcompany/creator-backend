@@ -51,7 +51,7 @@ model Team {
   nameTeam   String                                 // Nome da equipe
   accessCode String   @unique                       // Código de acesso da equipe
   createdAt  DateTime @default(now())               // Data de criação
-  updatedAt  DateTime @default(now())               // Data de atualização
+  updatedAt  DateTime?                              // Data de atualização
   isDeleted  Int      @default(0)                   // Flag de exclusão lógica
 
   users      User[]                                 // Relacionamento com usuários
@@ -78,7 +78,7 @@ model Plan {
   reviewLimit    Int                                     // Limite de revisões de conteúdo
 
   createdAt      DateTime @default(now())               // Data de criação do plano
-  updatedAt      DateTime @default(now())               // Data de atualização do plano
+  updatedAt      DateTime?                              // Data de atualização do plano
   isDeleted      Int      @default(0)                   // Flag de exclusão lógica
 
   teamPlans     TeamPlan[]                             // Relacionamento com planos de equipe
@@ -89,7 +89,7 @@ model Brand {
   name       String                                 // Nome da marca
   teamId     Int                                    // ID da equipe responsável pela marca
   createdAt  DateTime @default(now())               // Data de criação da marca
-  updatedAt  DateTime @default(now())               // Data de atualização da marca
+  updatedAt  DateTime?                              // Data de atualização da marca
   isDeleted  Int      @default(0)                   // Flag para indicar exclusão lógica
 
   team       Team     @relation(fields: [teamId], references: [id])
@@ -115,7 +115,7 @@ model Theme {
   addInfo        String   @db.Text                       // Informações adicionais
 
   createdAt      DateTime @default(now())                // Data de criação
-  updatedAt      DateTime @default(now())                // Data de atualização
+  updatedAt      DateTime?                               // Data de atualização
   isDeleted      Int      @default(0)                    // Flag de exclusão lógica
 
   brand          Brand    @relation(fields: [brandId], references: [id]) // Marca relacionada
@@ -139,7 +139,7 @@ model Persona {
   challenge       String   @db.VarChar(512)              // Desafios enfrentados
 
   createdAt       DateTime @default(now())               // Data de criação
-  updatedAt       DateTime @default(now())               // Data de atualização
+  updatedAt       DateTime?                              // Data de atualização
   isDeleted       Int      @default(0)                   // Exclusão lógica (0 = ativa)
 
   brand           Brand    @relation(fields: [brandId], references: [id]) // Marca relacionada
@@ -163,7 +163,7 @@ model Content {
   visualReference Int                                    // 0 = não, 1 = sim
   responseAI      String                                 // Resposta da IA
   createdAt       DateTime @default(now())               // Data de criação
-  updatedAt       DateTime @default(now())               // Data de atualização
+  updatedAt       DateTime?                              // Data de atualização
   isDeleted       Int      @default(0)                   // 0 = ativo, 1 = deletado
 
   user            User     @relation(fields: [userId], references: [id])
@@ -184,7 +184,7 @@ model Planning {
   addInfo     String                                 // Informações adicionais
   responseAI  String                                 // Resposta da IA
   createdAt   DateTime @default(now())              // Data de criação
-  updatedAt   DateTime @default(now())              // Data de atualização
+  updatedAt   DateTime?                             // Data de atualização
   isDeleted   Int      @default(0)                  // Exclusão lógica: 0 = ativo, 1 = deletado
 
   user        User     @relation(fields: [userId], references: [id])
@@ -201,7 +201,7 @@ model Review {
   iaText      String                                 // Prompt para explicação da imagem
   responseAI  String                                 // Resposta da IA
   createdAt   DateTime @default(now())               // Data de criação
-  updatedAt   DateTime @default(now())               // Data de atualização
+  updatedAt   DateTime?                              // Data de atualização
   isDeleted   Int      @default(0)                   // Exclusão lógica: 0 = ativo, 1 = deletado
 
   user        User     @relation(fields: [userId], references: [id])
@@ -215,7 +215,7 @@ model TeamPlan {
   planId     Int
   endDate    DateTime                              // Data de fim da assinatura
   createdAt  DateTime @default(now())              // Data de início da assinatura
-  updatedAt  DateTime @default(now())              // Data de atualização
+  updatedAt  DateTime?                             // Data de atualização
   isDeleted  Int      @default(0)                  // Exclusão lógica (0 = ativo, 1 = deletado)
 
   team       Team     @relation(fields: [teamId], references: [id])

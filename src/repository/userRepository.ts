@@ -59,6 +59,13 @@ class UserRepository {
         return users;
     }
 
+    async getUserByEmail(email: string): Promise<UserModelInterface | null> {
+        return await this.client.user.findUnique({
+            where: { email }
+        });
+    }
+
+
     async createUser(user: UserModel): Promise<UserModelInterface> {
         const newUser = await this.client.user.create({
             data: {
