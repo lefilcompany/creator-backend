@@ -119,10 +119,8 @@ userRoute.routes.post("/", async (req, res) => {
         const stateUser = req.body.stateUser as string;
         const roleUser = req.body.roleUser as number | null;
         const teamId = req.body.teamId as number | null;
-        const isDeleted = req.body.isDeleted || 0;
         const stripeCustomerId = req.body.stripeCustomerId as string | null;
          
-        
         const userService = CreateUser.getInstance();
 
         const newUser = await userService.execute({

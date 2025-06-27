@@ -35,9 +35,9 @@ export class UpdateUser implements Service {
             user.stateUser,
             user.roleUser,
             user.teamId,
-            user.isDeleted ?? 0,                           // <- mantém ou define como ativo
+            user.isDeleted ?? 0,                           
             user.stripeCustomerId ?? null,
-            new Date()                                     // <- sempre atualiza o updatedAt
+            new Date()                                     
         );
 
         const updatedUser = await this.repository.updateUser(userObj);
