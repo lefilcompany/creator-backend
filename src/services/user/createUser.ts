@@ -27,7 +27,7 @@ export class CreateUser implements Service {
 
     public async execute({user}: CreateUserInput): Promise<CreateUserOutput> {
         try {
-            const userObj = new UserModel(user.id, user.userName, user.email, user.password, user.cityUser, user.stateUser, user.roleUser, user.teamId, user.isDeleted, user.stripeCustomerId);
+            const userObj = new UserModel(user.id, user.userName, user.email, user.password, user.cityUser, user.stateUser, user.roleUser, user.teamId);
 
             const newUser = await this.repository.createUser(userObj);
 
@@ -40,7 +40,7 @@ export class CreateUser implements Service {
                     throw new Error('Email já cadastrado');
                 }
             }
-            throw new Error('Erro ao criar usuário: ' + error);
+            throw new Error('Erro ao criar usuário! ' + error);
         }
     }
 }

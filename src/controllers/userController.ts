@@ -25,6 +25,21 @@ userRoute.routes.get("/", async (req, res) => {
     }
 });
 
+/* 
+    GET: Rota para obter todos os usuários ativos
+    Exemplo: GET /user/active
+*/
+userRoute.routes.get('/active', async (req, res) => {
+    try {
+        const userService = GetAllUsersActive.getInstance();
+        const activeUsers = await userService.execute();
+
+        res.status(200).send(activeUsers);
+    } catch (error: any) {
+        handleError(error, res);
+    }
+});
+
 /*
     GET: Rota para obter um usuário específico pelo ID
     Exemplo: GET /user/1
@@ -41,21 +56,6 @@ userRoute.routes.get("/:id", async (req, res) => {
 
         res.status(200).send(user);
     } catch (error) {
-        handleError(error, res);
-    }
-});
-
-/* 
-    GET: Rota para obter todos os usuários ativos
-    Exemplo: GET /user/active
-*/
-userRoute.routes.get('/active', async (req, res) => {
-    try {
-        const userService = GetAllUsersActive.getInstance();
-        const activeUsers = await userService.execute();
-
-        res.status(200).send(activeUsers);
-    } catch (error: any) {
         handleError(error, res);
     }
 });
@@ -135,7 +135,6 @@ userRoute.routes.post("/", async (req, res) => {
                 stateUser,
                 roleUser: roleUser || null,
                 teamId: teamId || null,
-                isDeleted: isDeleted || 0,
                 stripeCustomerId: stripeCustomerId || null,
                 createdAt: undefined,
                 updatedAt: null
@@ -174,8 +173,6 @@ userRoute.routes.put("/:id", async (req, res) => {
         const stateUser = req.body.stateUser as string;
         const roleUser = req.body.roleUser as number | null;
         const teamId = req.body.teamId as number | null;
-        const isDeleted = req.body.isDeleted || 0;
-        const stripeCustomerId = req.body.stripeCustomerId as string | null;
 
         const userService = UpdateUser.getInstance();
         const updatedUser = await userService.execute({
@@ -188,10 +185,8 @@ userRoute.routes.put("/:id", async (req, res) => {
                 stateUser,
                 roleUser: roleUser || null,
                 teamId: teamId || null,
-                isDeleted: isDeleted || 0,
-                stripeCustomerId: stripeCustomerId || null,
                 createdAt: undefined,
-                updatedAt: new Date() 
+                updatedAt: new Date()
             }
         });
 

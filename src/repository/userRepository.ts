@@ -22,9 +22,10 @@ class UserRepository {
     }
 
     async getAllUsersActive(): Promise<UserModelInterface[]> {
+        const valido = 0;
         const usersActive = await this.client.user.findMany({
             where: {
-                isDeleted: 0,
+                isDeleted: valido,
             },
         });
         return usersActive;
@@ -68,8 +69,6 @@ class UserRepository {
                 stateUser: user.getStateUser(),
                 roleUser: user.getRoleUser(),
                 teamId: user.getTeamId(),
-                isDeleted: user.getIsDeleted(),
-                stripeCustomerId: user.getStripeCustomerId(),
             }
         });
         return newUser;
@@ -90,6 +89,7 @@ class UserRepository {
                 teamId: user.getTeamId(),
                 isDeleted: user.getIsDeleted(),
                 stripeCustomerId: user.getStripeCustomerId(),
+                updatedAt: user.getUpdatedAt()
             }
         });
         return updatedUser;

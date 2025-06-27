@@ -26,7 +26,18 @@ export class UpdateUser implements Service {
     }
 
     public async execute({user}: UpdateUserInput): Promise<UpdateUserOutput> {
-        const userObj = new UserModel(user.id, user.userName, user.email, user.password, user.cityUser, user.stateUser, user.roleUser, user.teamId, user.isDeleted, user.stripeCustomerId);
+        const userObj = new UserModel(
+            user.id,
+            user.userName,
+            user.email,
+            user.password,
+            user.cityUser,
+            user.stateUser,
+            user.roleUser,
+            user.teamId,
+            user.stripeCustomerId ?? null,
+            user.updatedAt ?? new Date() // ← Aqui garantimos a atualização
+        );
 
         const updatedUser = await this.repository.updateUser(userObj);
         return {

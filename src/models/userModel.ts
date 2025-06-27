@@ -7,7 +7,7 @@ class UserModel {
     private stateUser: string;
     private roleUser: number | null;
     private teamId: number | null;
-    private isDeleted: number;
+    private isDeleted?: number;
     private stripeCustomerId: string | null;
     private createdAt: Date;
     private updatedAt: Date | null;
@@ -21,8 +21,8 @@ class UserModel {
         stateUser: string,
         roleUser: number | null,
         teamId: number | null,
-        isDeleted: number,
-        stripeCustomerId: string | null
+        stripeCustomerId?: string | null,
+        updatedAt: Date | null = null
     ) {
         this.id = id;
 
@@ -53,10 +53,10 @@ class UserModel {
 
         this.roleUser = roleUser;
         this.teamId = teamId;
-        this.isDeleted = isDeleted;
-        this.stripeCustomerId = stripeCustomerId;
+        this.isDeleted = 0;
+        this.stripeCustomerId = stripeCustomerId ?? null;
         this.createdAt = new Date();
-        this.updatedAt = null;
+        this.updatedAt = updatedAt;
     }
 
     public getId(): number | undefined {
@@ -92,7 +92,7 @@ class UserModel {
     }
 
     public getIsDeleted(): number {
-        return this.isDeleted;
+        return this.isDeleted? this.isDeleted : 0;
     }
 
     public getStripeCustomerId(): string | null {
@@ -119,8 +119,8 @@ export interface UserModelInterface {
     stateUser: string;
     roleUser: number | null;
     teamId: number | null;
-    isDeleted: number;
-    stripeCustomerId: string | null;
+    isDeleted?: number;
+    stripeCustomerId?: string | null;
     createdAt: Date | undefined;
     updatedAt: Date | null;
 }
