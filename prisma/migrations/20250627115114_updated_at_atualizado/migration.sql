@@ -1,0 +1,35 @@
+-- AlterTable
+ALTER TABLE "Brand" ALTER COLUMN "updatedAt" DROP NOT NULL,
+ALTER COLUMN "updatedAt" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "Content" ALTER COLUMN "updatedAt" DROP NOT NULL,
+ALTER COLUMN "updatedAt" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "Persona" ALTER COLUMN "updatedAt" DROP NOT NULL,
+ALTER COLUMN "updatedAt" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "Plan" ALTER COLUMN "updatedAt" DROP NOT NULL,
+ALTER COLUMN "updatedAt" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "Planning" ALTER COLUMN "updatedAt" DROP NOT NULL,
+ALTER COLUMN "updatedAt" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "Review" ALTER COLUMN "updatedAt" DROP NOT NULL,
+ALTER COLUMN "updatedAt" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "Team" ALTER COLUMN "updatedAt" DROP NOT NULL,
+ALTER COLUMN "updatedAt" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "TeamPlan" ALTER COLUMN "updatedAt" DROP NOT NULL,
+ALTER COLUMN "updatedAt" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "Theme" ALTER COLUMN "updatedAt" DROP NOT NULL,
+ALTER COLUMN "updatedAt" DROP DEFAULT;

@@ -1,35 +1,36 @@
 class UserModel {
     private id: number | undefined;
-    private username: string;
+    private userName: string;
     private email: string;
     private password: string;
     private cityUser: string;
     private stateUser: string;
     private roleUser: number | null;
     private teamId: number | null;
+    private isDeleted?: number;
+    private stripeCustomerId: string | null;
     private createdAt: Date;
     private updatedAt: Date | null;
-    private isDeleted: number;
-    private stripeCustomerId: string | null;
 
     constructor(
         id: number | undefined,
-        username: string,
+        userName: string,
         email: string,
         password: string,
         cityUser: string,
         stateUser: string,
         roleUser: number | null,
         teamId: number | null,
-        isDeleted: number,
-        stripeCustomerId: string | null
+        isDeleted?: number,
+        stripeCustomerId?: string | null,
+        updatedAt: Date | null = null
     ) {
         this.id = id;
 
-        if (!username || username.trim() === "") {
+        if (!userName || userName.trim() === "") {
             throw new Error(UserErros.USERNAME_REQUIRED);
         }
-        this.username = username;
+        this.userName = userName;
 
         if (!email || email.trim() === "") {
             throw new Error(UserErros.EMAIL_REQUIRED);
@@ -53,10 +54,10 @@ class UserModel {
 
         this.roleUser = roleUser;
         this.teamId = teamId;
+        this.isDeleted = isDeleted ?? 0;
+        this.stripeCustomerId = stripeCustomerId ?? null;
         this.createdAt = new Date();
-        this.updatedAt = null;
-        this.isDeleted = isDeleted;
-        this.stripeCustomerId = stripeCustomerId;
+        this.updatedAt = updatedAt;
     }
 
     public getId(): number | undefined {
@@ -64,7 +65,7 @@ class UserModel {
     }
 
     public getUsername(): string {
-        return this.username;
+        return this.userName;
     }
 
     public getEmail(): string {
@@ -91,6 +92,14 @@ class UserModel {
         return this.teamId;
     }
 
+    public getIsDeleted(): number {
+        return this.isDeleted? this.isDeleted : 0;
+    }
+
+    public getStripeCustomerId(): string | null {
+        return this.stripeCustomerId;
+    }
+    
     public getCreatedAt(): Date {
         return this.createdAt;
     }
@@ -98,31 +107,23 @@ class UserModel {
     public getUpdatedAt(): Date | null {
         return this.updatedAt;
     }
-
-    public getIsDeleted(): number {
-        return this.isDeleted;
-    }
-
-    public getStripeCustomerId(): string | null {
-        return this.stripeCustomerId;
-    }
 }
 
 export default UserModel;
 
 export interface UserModelInterface {
     id: number | undefined;
-    username: string;
+    userName: string;
     email: string;
     password: string;
     cityUser: string;
     stateUser: string;
     roleUser: number | null;
     teamId: number | null;
+    isDeleted?: number;
+    stripeCustomerId?: string | null;
     createdAt: Date | undefined;
     updatedAt: Date | null;
-    isDeleted: number;
-    stripeCustomerId: string | null;
 }
 
 export enum UserErros {
