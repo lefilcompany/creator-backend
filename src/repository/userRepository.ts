@@ -73,9 +73,7 @@ class UserRepository {
                 email: user.getEmail(),
                 password: user.getPassword(),
                 cityUser: user.getCityUser(),
-                stateUser: user.getStateUser(),
-                roleUser: user.getRoleUser(),
-                teamId: user.getTeamId(),
+                stateUser: user.getStateUser()
             }
         });
         return newUser;

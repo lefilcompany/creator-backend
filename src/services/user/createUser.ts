@@ -1,5 +1,6 @@
 import UserModel, { UserModelInterface } from "../../models/userModel";
 import UserRepository from "../../repository/userRepository";
+import { UserRoles } from "../../utils/userRoles";
 import { Service, ServiceInput, ServiceOutput } from "../service";
 
 interface CreateUserInput extends ServiceInput {
@@ -63,7 +64,7 @@ export class CreateUser implements Service {
                 user.password,
                 user.cityUser,
                 user.stateUser,
-                user.roleUser,
+                UserRoles.NEW_USER,
                 user.teamId,
                 0,
                 user.stripeCustomerId ?? null

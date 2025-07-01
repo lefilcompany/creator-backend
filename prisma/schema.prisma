@@ -18,8 +18,8 @@ model User {
   password   String                                
   cityUser   String                               
   stateUser  String                               
-  roleUser   Int?                                   
-  teamId     Int?                                   
+  roleUser   Int       @default(0)                  // MUDANÇA: Default 0 (novo usuário)
+  teamId     Int                                   
   createdAt  DateTime  @default(now())             
   updatedAt  DateTime?              
   isDeleted  Int       @default(0)      
@@ -40,8 +40,9 @@ model User {
 
 model Permission {
   id         Int     @id @default(autoincrement())  // Identificador único das permissões
-  permission String                                 // Nome da role (ex: adminCreator, teamAdmin, etc.)
-  value      Int                                    // Valor da role da permissão                  
+  permission String  @unique                        // MUDANÇA: Adicionado @unique
+  value      Int     @unique                        // MUDANÇA: Adicionado @unique para evitar duplicatas
+  description String?                               // MUDANÇA: Descrição da permissão (opcional)
 
   users      User[]                                 // Relacionamento inverso com usuários
 }

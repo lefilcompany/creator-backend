@@ -8,6 +8,8 @@ import { GetUsersByTeamIdActive } from "../services/user/getUsersByTeamIdActive"
 import { CreateUser } from "../services/user/createUser";
 import { UpdateUser } from "../services/user/updateUser";
 import { DeleteUser } from "../services/user/deleteUser";
+import { UserRoles } from "../utils/userRoles";
+import { UserInformation } from "../enums/userInformation";
 
 const userRoute = new AppRoute("user");
 
@@ -51,7 +53,7 @@ userRoute.routes.get("/:id", async (req, res) => {
         const user = await userService.execute({idUser: Number(id)});
 
         if (!user) {
-            throw new Error("Usuário não encontrado");
+            throw new Error(UserInformation.USER_NOT_FOUND);
         }
 
         res.status(200).send(user);
@@ -117,8 +119,6 @@ userRoute.routes.post("/", async (req, res) => {
         const password = req.body.password as string;
         const cityUser = req.body.cityUser as string;
         const stateUser = req.body.stateUser as string;
-        const roleUser = req.body.roleUser as number | null;
-        const teamId = req.body.teamId as number | null;
         const stripeCustomerId = req.body.stripeCustomerId as string | null;
          
         const userService = CreateUser.getInstance();
@@ -131,8 +131,8 @@ userRoute.routes.post("/", async (req, res) => {
                 password,
                 cityUser,
                 stateUser,
-                roleUser: roleUser || null,
-                teamId: teamId || null,
+                roleUser: UserRoles.NEW_USER,
+                teamId: undefined,
                 stripeCustomerId: stripeCustomerId || null,
                 createdAt: undefined,
                 updatedAt: null
@@ -181,8 +181,8 @@ userRoute.routes.put("/:id", async (req, res) => {
                 password,
                 cityUser,
                 stateUser,
-                roleUser: roleUser || null,
-                teamId: teamId || null,
+                roleUser: roleUser || undefined,
+                teamId: teamId || undefined,
                 createdAt: undefined,
                 updatedAt: new Date()
             }
@@ -205,7 +205,7 @@ userRoute.routes.delete("/:id", async (req, res) => {
         const userService = DeleteUser.getInstance();
         await userService.execute({ id: Number(id) });
 
-        res.status(200).send({ message: 'Usuário deletado com sucesso!' });
+        res.status(200).send(UserInformation.USER_DELETED);
     } catch (error) {
         handleError(error, res);
     }
