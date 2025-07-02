@@ -19,7 +19,7 @@ model User {
   cityUser   String                               
   stateUser  String                               
   roleUser   Int       @default(0)                  // MUDANÇA: Default 0 (novo usuário)
-  teamId     Int                                   
+  teamId     Int?                                   
   createdAt  DateTime  @default(now())             
   updatedAt  DateTime?              
   isDeleted  Int       @default(0)      

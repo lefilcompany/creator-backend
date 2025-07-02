@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import UserModel, { UserModelInterface } from "../models/userModel";
+import { UserRoles } from "../utils/userRoles";
 
 class UserRepository {
     private client: PrismaClient;
@@ -73,7 +74,13 @@ class UserRepository {
                 email: user.getEmail(),
                 password: user.getPassword(),
                 cityUser: user.getCityUser(),
-                stateUser: user.getStateUser()
+                stateUser: user.getStateUser(),
+                roleUser: user.getRoleUser() ?? UserRoles.NEW_USER,
+                teamId: user.getTeamId() ?? null, 
+                isDeleted: user.getIsDeleted(),
+                stripeCustomerId: user.getStripeCustomerId(),
+                createdAt: user.getCreatedAt(),
+                updatedAt: user.getUpdatedAt() ?? null
             }
         });
         return newUser;

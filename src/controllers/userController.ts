@@ -132,7 +132,7 @@ userRoute.routes.post("/", async (req, res) => {
                 cityUser,
                 stateUser,
                 roleUser: UserRoles.NEW_USER,
-                teamId: undefined,
+                teamId: null,
                 stripeCustomerId: stripeCustomerId || null,
                 createdAt: undefined,
                 updatedAt: null
@@ -182,7 +182,7 @@ userRoute.routes.put("/:id", async (req, res) => {
                 cityUser,
                 stateUser,
                 roleUser: roleUser || undefined,
-                teamId: teamId || undefined,
+                teamId: teamId || null,
                 createdAt: undefined,
                 updatedAt: new Date()
             }

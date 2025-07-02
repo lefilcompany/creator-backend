@@ -9,7 +9,7 @@ class UserModel implements UserRoleValidator {
     private cityUser: string;
     private stateUser: string;
     private roleUser: number | undefined;
-    private teamId: number | undefined;
+    private teamId: number | null;
     private isDeleted?: number;
     private stripeCustomerId: string | null;
     private createdAt: Date;
@@ -23,7 +23,7 @@ class UserModel implements UserRoleValidator {
         cityUser: string,
         stateUser: string,
         roleUser: number | undefined,
-        teamId: number | undefined,
+        teamId: number | null,
         isDeleted?: number,
         stripeCustomerId?: string | null,
         updatedAt: Date | null = null
@@ -120,7 +120,7 @@ class UserModel implements UserRoleValidator {
         }
 
         this.roleUser = UserRoles.NEW_USER;
-        this.teamId = undefined;
+        this.teamId = null;
         this.updatedAt = new Date();
     }
 
@@ -160,7 +160,7 @@ class UserModel implements UserRoleValidator {
         return this.roleUser;
     }
 
-    public getTeamId(): number | undefined {
+    public getTeamId(): number | null {
         return this.teamId;
     }
 
@@ -191,7 +191,7 @@ export interface UserModelInterface {
     cityUser: string;
     stateUser: string;
     roleUser: number | undefined;
-    teamId: number | undefined;
+    teamId: number | null;
     isDeleted?: number;
     stripeCustomerId?: string | null;
     createdAt: Date | undefined;
