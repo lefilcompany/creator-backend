@@ -1,5 +1,5 @@
 import { UserInformation } from "../enums/userInformation";
-import { UserRoles, UserRoleValidator } from "../utils/userRoles";
+import { UserRoles, UserRolesDescriptions, UserRoleValidator } from "../utils/userRoles";
 
 class UserModel implements UserRoleValidator {
     private id: number | undefined;
@@ -8,81 +8,78 @@ class UserModel implements UserRoleValidator {
     private password: string;
     private cityUser: string;
     private stateUser: string;
-    private roleUser: number | undefined;
+    private rolePermission: string
+    private roleValue: number; 
     private teamId: number | null;
-    private isDeleted?: number;
-    private stripeCustomerId: string | null;
     private createdAt: Date;
     private updatedAt: Date | null;
+    private isDeleted: number;
+    private stripeCustomerId: string | null;
 
-    constructor(
+    constructor( 
         id: number | undefined,
         userName: string,
         email: string,
         password: string,
         cityUser: string,
         stateUser: string,
-        roleUser: number | undefined,
-        teamId: number | null,
-        isDeleted?: number,
-        stripeCustomerId?: string | null,
-        updatedAt: Date | null = null
+        stripeCustomerId: string | null = null
     ) {
         this.id = id;
 
-        if (!userName || userName.trim() === "") {
+        if (!userName || userName.length < 3) {
             throw new Error(UserInformation.USERNAME_REQUIRED);
         }
         this.userName = userName;
 
-        if (!email || email.trim() === "") {
+        if (!email || !email.includes('@')) {
             throw new Error(UserInformation.EMAIL_REQUIRED);
         }
         this.email = email;
 
-        if (!password || password.trim() === "") {
+        if (!password || password.length < 6 || password.trim() === '') {
             throw new Error(UserInformation.PASSWORD_REQUIRED);
         }
         this.password = password;
 
-        if (!cityUser || cityUser.trim() === "") {
+        if (!cityUser || cityUser.trim() === '') {
             throw new Error(UserInformation.CITY_REQUIRED);
         }
         this.cityUser = cityUser;
 
-        if (!stateUser || stateUser.trim() === "") {
+        if (!stateUser || stateUser.trim() === '') {
             throw new Error(UserInformation.STATE_REQUIRED);
         }
         this.stateUser = stateUser;
-
-        this.roleUser = roleUser !== null ? roleUser : UserRoles.NEW_USER;
-        this.teamId = teamId;
-        this.isDeleted = isDeleted ?? 0;
-        this.stripeCustomerId = stripeCustomerId ?? null;
+        this.rolePermission = UserRolesDescriptions.WITHOUT_TEAM_DESCRIPTION; 
+        this.roleValue = UserRoles.WITHOUT_TEAM; 
+        this.teamId = null;
+        this.isDeleted = 0;
         this.createdAt = new Date();
-        this.updatedAt = updatedAt;
+        this.updatedAt = null;
+        this.stripeCustomerId = stripeCustomerId;
     }
 
     public canCreateTeam(): boolean {
-        return this.roleUser === UserRoles.NEW_USER || this.roleUser === UserRoles.SYSTEM_ADMIN;
+        return this.roleValue === UserRoles.WITHOUT_TEAM || this.roleValue === UserRoles.SYSTEM_ADMIN;
     }
 
     public canManageTeam(): boolean {
-        return this.roleUser === UserRoles.TEAM_ADMIN || this.roleUser === UserRoles.SYSTEM_ADMIN;
+        return this.roleValue === UserRoles.TEAM_ADMIN || this.roleValue === UserRoles.SYSTEM_ADMIN;
     }
 
     public canUseAIFeatures(): boolean {
-        return this.roleUser !== null && this.roleUser !== UserRoles.NEW_USER;
+        return this.roleValue !== null && this.roleValue !== UserRoles.WITHOUT_TEAM;
     }
 
     public canJoinTeam(): boolean {
-        return this.roleUser === UserRoles.NEW_USER;
+        return this.roleValue === UserRoles.WITHOUT_TEAM;
     }
 
     public getRoleDescription(): string {
-        switch (this.roleUser) {
-            case UserRoles.NEW_USER:
-                return UserInformation.NEW_USER;
+        switch (this.roleValue) {
+            case UserRoles.WITHOUT_TEAM:
+                return UserInformation.USER_WITHOUT_TEAM;
             case UserRoles.TEAM_ADMIN:
                 return UserInformation.TEAM_ADMIN;
             case UserRoles.TEAM_MEMBER:
@@ -95,40 +92,44 @@ class UserModel implements UserRoleValidator {
     }
 
     public promoteToAdmin(teamId: number): void {
-        if (this.roleUser !== UserRoles.NEW_USER) {
+        if (this.roleValue !== UserRoles.WITHOUT_TEAM) {
             throw new Error(UserInformation.USER_WITH_TEAM);
         }
 
-        this.roleUser = UserRoles.TEAM_ADMIN;
+        this.roleValue = UserRoles.TEAM_ADMIN;
+        this.rolePermission = UserRolesDescriptions.TEAM_ADMIN_DESCRIPTION;
         this.teamId = teamId;
         this.updatedAt = new Date();
     }
 
     public joinTeamAsMember(teamId: number): void {
-        if (this.roleUser !== UserRoles.NEW_USER) {
+        if (this.roleValue !== UserRoles.WITHOUT_TEAM) {
             throw new Error(UserInformation.USER_WITH_TEAM);
         }
 
-        this.roleUser = UserRoles.TEAM_MEMBER;
+        this.roleValue = UserRoles.TEAM_MEMBER;
+        this.rolePermission = UserRolesDescriptions.TEAM_MEMBER_DESCRIPTION;
         this.teamId = teamId;
         this.updatedAt = new Date();
     }
 
     public leaveTeam(): void {
-        if (this.roleUser === UserRoles.NEW_USER) {
+        if (this.roleValue === UserRoles.WITHOUT_TEAM) {
             throw new Error(UserInformation.USER_WITHOUT_TEAM);
         }
 
-        this.roleUser = UserRoles.NEW_USER;
+        this.roleValue = UserRoles.WITHOUT_TEAM;
+        this.rolePermission = UserRolesDescriptions.WITHOUT_TEAM_DESCRIPTION;
         this.teamId = null;
         this.updatedAt = new Date();
     }
 
     public promoteToSystemAdmin(): void {
-        if (this.roleUser !== UserRoles.SYSTEM_ADMIN) {
+        if (this.roleValue !== UserRoles.SYSTEM_ADMIN) {
             throw new Error(UserInformation.USER_WITH_TEAM);
         }
-        this.roleUser = UserRoles.SYSTEM_ADMIN;
+        this.roleValue = UserRoles.SYSTEM_ADMIN;
+        this.rolePermission = UserRolesDescriptions.SYSTEM_ADMIN_DESCRIPTION;
         this.updatedAt = new Date();
     }
 
@@ -136,7 +137,7 @@ class UserModel implements UserRoleValidator {
         return this.id;
     }
 
-    public getUsername(): string {
+    public getUserName(): string {
         return this.userName;
     }
 
@@ -156,20 +157,16 @@ class UserModel implements UserRoleValidator {
         return this.stateUser;
     }
 
-    public getRoleUser(): number | undefined {
-        return this.roleUser;
+    getRolePermission(): string {
+        return this.rolePermission;
+    }
+
+    public getRoleValue(): number {
+        return this.roleValue;
     }
 
     public getTeamId(): number | null {
         return this.teamId;
-    }
-
-    public getIsDeleted(): number {
-        return this.isDeleted ? this.isDeleted : 0;
-    }
-
-    public getStripeCustomerId(): string | null {
-        return this.stripeCustomerId;
     }
 
     public getCreatedAt(): Date {
@@ -178,6 +175,62 @@ class UserModel implements UserRoleValidator {
 
     public getUpdatedAt(): Date | null {
         return this.updatedAt;
+    }
+
+    public getIsDeleted(): number {
+        return this.isDeleted;
+    }
+
+    public getStripeCustomerId(): string | null {
+        return this.stripeCustomerId;
+    }
+
+    public setId(id: number): void {
+        this.id = id;
+    }
+
+    public setUserName(userName: string): void {
+        this.userName = userName;
+    }
+
+    public setEmail(email: string): void {
+        this.email = email;
+    }
+
+    public setPassword(password: string): void {
+        this.password = password;
+    }
+
+    public setCityUser(cityUser: string): void {
+        this.cityUser = cityUser;
+    }
+
+    public setStateUser(stateUser: string): void {
+        this.stateUser = stateUser;
+    }
+
+    public setRolePermission(rolePermission: UserRolesDescriptions): void {
+        this.rolePermission = rolePermission;
+    }
+
+    public setRoleValue(roleValue: number): void {
+        this.roleValue = roleValue;
+    }
+
+    public setTeamId(teamId: number | null): void {
+        this.teamId = teamId;
+    }
+
+    public setUpdatedAt(updatedAt: Date | null): void {
+        this.updatedAt = updatedAt;
+    }
+
+    public setIsDeleted(isDeleted: number): void {
+        this.isDeleted = isDeleted;
+    }
+
+    public setStripeCustomerId(stripeCustomerId: string | null): void {
+        this.stripeCustomerId = stripeCustomerId;
     }
 }
 
@@ -190,10 +243,11 @@ export interface UserModelInterface {
     password: string;
     cityUser: string;
     stateUser: string;
-    roleUser: number | undefined;
+    rolePermission: string;
+    roleValue: UserRoles;
     teamId: number | null;
-    isDeleted?: number;
-    stripeCustomerId?: string | null;
-    createdAt: Date | undefined;
+    createdAt: Date;
     updatedAt: Date | null;
+    isDeleted: number;
+    stripeCustomerId: string | null;
 }

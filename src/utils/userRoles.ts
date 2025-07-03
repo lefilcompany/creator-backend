@@ -1,10 +1,18 @@
 import { UserModelInterface } from "../models/userModel";
 
 export enum UserRoles {
-    NEW_USER = 0,       
+    WITHOUT_TEAM = 0,       
     TEAM_ADMIN = 1,  
     TEAM_MEMBER = 2,  
     SYSTEM_ADMIN = 3   
+}
+
+export enum UserRolesDescriptions {
+    WITHOUT_TEAM_DESCRIPTION = "Usuário sem equipe",
+    TEAM_ADMIN_DESCRIPTION = "Administrador da equipe",
+    TEAM_MEMBER_DESCRIPTION = "Membro da equipe",
+    SYSTEM_ADMIN_DESCRIPTION = "Administrador do sistema",
+    ROLE_UNKNOWN_DESCRIPTION = "Role desconhecida"
 }
 
 export interface UserRoleValidator {

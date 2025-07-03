@@ -11,6 +11,8 @@ export enum UserInformation {
     TEAM_MEMBER = "Membro da equipe",
     SYSTEM_ADMIN = "Administrador do sistema",
     ROLE_UNKNOWN = "Permissão desconhecida",
+    ROLE_REQUIRED = "Permissão é obrigatória.",
+    ROLE_VALUE_INVALID = "Valor da permissão inválido.",
     EMAIL_ALREADY_REGISTERED = "Email já cadastrado.",
     USER_NOT_FOUND = "Usuário não encontrado.",
     USER_DELETED = "Usuário excluído.",

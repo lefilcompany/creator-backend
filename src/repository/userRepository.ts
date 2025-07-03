@@ -1,86 +1,41 @@
 import { PrismaClient } from "@prisma/client";
 import UserModel, { UserModelInterface } from "../models/userModel";
-import { UserRoles } from "../utils/userRoles";
 
-class UserRepository {
+export class UserRepostitory {
     private client: PrismaClient;
-    private static instance: UserRepository;
+    private static instance: UserRepostitory;
 
     private constructor() {
         this.client = new PrismaClient();
     }
 
-    public static get(): UserRepository {
-        if (!UserRepository.instance) {
-            UserRepository.instance = new UserRepository();
+    public static getInstance(): UserRepostitory {
+        if (!UserRepostitory.instance) {
+            UserRepostitory.instance = new UserRepostitory();
         }
-        return UserRepository.instance;
+        return UserRepostitory.instance;
     }
 
-    async getAllUsers(): Promise<UserModelInterface[]> {
-        const listUsers = await this.client.user.findMany();
-        return listUsers;
+    public async getAllUsers(): Promise<UserModelInterface[]> {
+        const users = await this.client.user.findMany();
+        return users;
     }
 
-    async getAllUsersActive(): Promise<UserModelInterface[]> {
-        const valido = 0;
-        const usersActive = await this.client.user.findMany({
-            where: {
-                isDeleted: valido,
-            },
-        });
-        return usersActive;
-    }
-
-    async getUserById(id: number): Promise<UserModelInterface | null> {
+    public async getUserById(id: number): Promise<UserModelInterface | null> {
         const user = await this.client.user.findUnique({
-            where: {
-                id: Number(id),
-            },
+            where: { id },
         });
         return user;
     }
 
-    async getUsersByTeamId(teamId: number): Promise<UserModelInterface[]> {
-        const users = await this.client.user.findMany({
-            where: {
-                teamId: Number(teamId)
-            },
-        });
-        return users;
-    }
-
-    async getUsersByTeamIdActive(teamId: number): Promise<UserModelInterface[]> {
-        const users = await this.client.user.findMany({
-            where: {
-                teamId: Number(teamId),
-                isDeleted: 0,
-            },
-        });
-        return users;
-    }
-
-    async getUserByEmail(email: string): Promise<UserModelInterface | null> {
-        return await this.client.user.findUnique({
-            where: { email }
-        });
-    }
-
-
     async createUser(user: UserModel): Promise<UserModelInterface> {
         const newUser = await this.client.user.create({
             data: {
-                userName: user.getUsername(),
+                userName: user.getUserName(),
                 email: user.getEmail(),
                 password: user.getPassword(),
                 cityUser: user.getCityUser(),
-                stateUser: user.getStateUser(),
-                roleUser: user.getRoleUser() ?? UserRoles.NEW_USER,
-                teamId: user.getTeamId() ?? null, 
-                isDeleted: user.getIsDeleted(),
-                stripeCustomerId: user.getStripeCustomerId(),
-                createdAt: user.getCreatedAt(),
-                updatedAt: user.getUpdatedAt() ?? null
+                stateUser: user.getStateUser()
             }
         });
         return newUser;
@@ -92,12 +47,13 @@ class UserRepository {
                 id: user.getId(),
             },
             data: {
-                userName: user.getUsername(),
+                userName: user.getUserName(),
                 email: user.getEmail(),
                 password: user.getPassword(),
                 cityUser: user.getCityUser(),
                 stateUser: user.getStateUser(),
-                roleUser: user.getRoleUser(),
+                rolePermission: user.getRolePermission(),
+                roleValue: user.getRoleValue(),
                 teamId: user.getTeamId(),
                 isDeleted: user.getIsDeleted(),
                 stripeCustomerId: user.getStripeCustomerId(),
@@ -119,5 +75,3 @@ class UserRepository {
         return deletedUser;
     }
 }
-
-export default UserRepository;
