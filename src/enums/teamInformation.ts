@@ -1,0 +1,17 @@
+export enum TeamInformation {
+    TEAM_NOT_FOUND = "Equipe não encontrada",
+    TEAM_ALREADY_EXISTS = "Equipe já existe",
+    TEAM_CREATED = "Equipe criada com sucesso",
+    TEAM_UPDATED = "Equipe atualizada com sucesso",
+    TEAM_DELETED = "Equipe excluída com sucesso",
+    TEAM_ACCESS_CODE_ALREADY_EXISTS = "Código de acesso já cadastrado",
+    TEAM_ACCESS_CODE_NOT_FOUND = "Código de acesso não encontrado",
+    TEAM_MEMBER_ADDED = "Membro adicionado à equipe com sucesso",
+    TEAM_MEMBER_REMOVED = "Membro removido da equipe com sucesso",
+    TEAM_MEMBER_NOT_FOUND = "Membro da equipe não encontrado",
+    TEAM_MEMBER_ALREADY_EXISTS = "Membro já existe na equipe",
+    TEAM_MEMBER_LIMIT_REACHED = "Limite de membros da equipe atingido",
+    TEAM_INACTIVE = "Equipe inativa",
+    TEAM_ACTIVE = "Equipe está ativa",
+    USERID_INVALID = "Id do usuário inválido",
+}

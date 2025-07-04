@@ -36,6 +36,7 @@ model User {
   contents Content[] // Relacionamento com conteúdos criados pelo usuário
   planning Planning[] // Relacionamento com planejamentos criados pelo usuário
   reviews  Review[] // Relacionamento com revisões criadas pelo usuário
+  solicitations Solicitation[] // Relacionamento com solicitações de equipe
 }
 
 model Team {
@@ -54,6 +55,7 @@ model Team {
   contents  Content[] // Relacionamento com conteúdos
   planning  Planning[] // Relacionamento com planejamentos
   reviews   Review[] // Relacionamento com revisões
+  solicitations Solicitation[] // Relacionamento com solicitações de equipe
 }
 
 model Plan {
@@ -267,4 +269,17 @@ model Subscription {
   startedAt            DateTime
   currentPeriodEnd     DateTime
   canceledAt           DateTime?
+}
+
+model Solicitation {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  teamId      Int
+  status      Int    @default(0) // Status da solicitação (Pendente, Aceita, Rejeitada)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? // Data de atualização
+  isDeleted   Int       @default(0) // Exclusão lógica (0 = ativo, 1 = deletado)
+
+  user User @relation(fields: [userId], references: [id])
+  team Team @relation(fields: [teamId], references: [id])
 }

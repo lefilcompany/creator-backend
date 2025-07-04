@@ -1,31 +1,68 @@
 import { PrismaClient } from "@prisma/client";
 import UserModel, { UserModelInterface } from "../models/userModel";
 
-export class UserRepostitory {
+export class UserRepository {
     private client: PrismaClient;
-    private static instance: UserRepostitory;
+    private static instance: UserRepository;
 
     private constructor() {
         this.client = new PrismaClient();
     }
 
-    public static getInstance(): UserRepostitory {
-        if (!UserRepostitory.instance) {
-            UserRepostitory.instance = new UserRepostitory();
+    public static get(): UserRepository {
+        if (!UserRepository.instance) {
+            UserRepository.instance = new UserRepository();
         }
-        return UserRepostitory.instance;
+        return UserRepository.instance;
     }
 
-    public async getAllUsers(): Promise<UserModelInterface[]> {
-        const users = await this.client.user.findMany();
+    async getAllUsers(): Promise<UserModelInterface[]> {
+        const listUsers = await this.client.user.findMany();
+        return listUsers;
+    }
+
+    async getAllUsersActive(): Promise<UserModelInterface[]> {
+        const valido = 0;
+        const usersActive = await this.client.user.findMany({
+            where: {
+                isDeleted: valido,
+            },
+        });
+        return usersActive;
+    }
+
+    async getUserById(id: number): Promise<UserModelInterface | null> {
+        const user = await this.client.user.findUnique({
+            where: {
+                id: Number(id),
+            },
+        });
+        return user;
+    }
+
+    async getUsersByTeamId(teamId: number): Promise<UserModelInterface[]> {
+        const users = await this.client.user.findMany({
+            where: {
+                teamId: Number(teamId)
+            },
+        });
         return users;
     }
 
-    public async getUserById(id: number): Promise<UserModelInterface | null> {
-        const user = await this.client.user.findUnique({
-            where: { id },
+    async getUsersByTeamIdActive(teamId: number): Promise<UserModelInterface[]> {
+        const users = await this.client.user.findMany({
+            where: {
+                teamId: Number(teamId),
+                isDeleted: 0,
+            },
         });
-        return user;
+        return users;
+    }
+
+    async getUserByEmail(email: string): Promise<UserModelInterface | null> {
+        return await this.client.user.findUnique({
+            where: { email }
+        });
     }
 
     async createUser(user: UserModel): Promise<UserModelInterface> {
@@ -35,7 +72,12 @@ export class UserRepostitory {
                 email: user.getEmail(),
                 password: user.getPassword(),
                 cityUser: user.getCityUser(),
-                stateUser: user.getStateUser()
+                stateUser: user.getStateUser(),
+                rolePermission: user.getRolePermission(),
+                roleValue: user.getRoleValue(),
+                teamId: user.getTeamId(),
+                updatedAt: user.getUpdatedAt(),
+                isDeleted: user.getIsDeleted(),
             }
         });
         return newUser;
@@ -70,6 +112,7 @@ export class UserRepostitory {
             },
             data: {
                 isDeleted: 1,
+                updatedAt: new Date(),
             }
         });
         return deletedUser;

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import mountRoutes from "./utils/mountRoutes";
-import { userRoute } from "./controllers/userController";
 import { teamRouter } from "./controllers/teamController";
+import userRoute from "./controllers/userController";
 
 const router = Router();
 

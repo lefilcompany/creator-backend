@@ -1,7 +1,7 @@
 {
-  "name": "template-node",
+  "name": "creator_backend",
   "version": "1.0.0",
-  "description": "A simple template for NodeJS projects at Seed a Bit",
+  "description": "Creator: A system where ideas are transformed into reality.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,9 +9,10 @@
     "build": "tsc"
   },
   "keywords": [
-    "template"
+    "Creator",
+    "Backend"
   ],
-  "author": "Guilherme Henrique",
+  "author": "LeFil Company | LIMA",
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^5.0.0",

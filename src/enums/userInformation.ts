@@ -4,7 +4,7 @@ export enum UserInformation {
     PASSWORD_REQUIRED = "A senha é obrigatória.",
     CITY_REQUIRED = "A cidade é obrigatória.",
     STATE_REQUIRED = "O estado é obrigatório.",
-    USER_WITH_TEAM = "Apenas usuários sem equipe podem ser promovidos a administrador.",
+    USER_WITH_TEAM = "Apenas usuários sem equipe podem criar uma equipe e serem promovidos a administrador.",
     USER_WITHOUT_TEAM = "O usuário não pertence a uma equipe.",
     NEW_USER = "Novo usuário",
     TEAM_ADMIN = "Administrador da equipe",
@@ -22,4 +22,5 @@ export enum UserInformation {
     USER_CREATED = "Usuário criado com sucesso.",
     USER_PROMOTED_ADM = "Usuário promovido a administrador da equipe com sucesso.",
     USER_JOINED_TEAM = "Usuário entrou na equipe com sucesso.",
+    USER_WRONG_TEAM = "Usuário não pertence à equipe.",
 }

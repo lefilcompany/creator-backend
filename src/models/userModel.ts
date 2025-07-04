@@ -9,21 +9,26 @@ class UserModel implements UserRoleValidator {
     private cityUser: string;
     private stateUser: string;
     private rolePermission: string
-    private roleValue: number; 
+    private roleValue: number;
     private teamId: number | null;
     private createdAt: Date;
     private updatedAt: Date | null;
     private isDeleted: number;
     private stripeCustomerId: string | null;
 
-    constructor( 
+    constructor(
         id: number | undefined,
         userName: string,
         email: string,
         password: string,
         cityUser: string,
         stateUser: string,
-        stripeCustomerId: string | null = null
+        rolePermission: string | null,
+        roleValue: number | null,
+        teamId: number | null,
+        updatedAt: Date | null,
+        isDeleted: number | null,
+        stripeCustomerId: string | null,
     ) {
         this.id = id;
 
@@ -51,13 +56,14 @@ class UserModel implements UserRoleValidator {
             throw new Error(UserInformation.STATE_REQUIRED);
         }
         this.stateUser = stateUser;
-        this.rolePermission = UserRolesDescriptions.WITHOUT_TEAM_DESCRIPTION; 
-        this.roleValue = UserRoles.WITHOUT_TEAM; 
-        this.teamId = null;
-        this.isDeleted = 0;
+
+        this.rolePermission = rolePermission || UserRolesDescriptions.WITHOUT_TEAM_DESCRIPTION;
+        this.roleValue = roleValue || UserRoles.WITHOUT_TEAM;
+        this.teamId = teamId || null;
+        this.isDeleted = isDeleted || 0;
         this.createdAt = new Date();
-        this.updatedAt = null;
-        this.stripeCustomerId = stripeCustomerId;
+        this.updatedAt = updatedAt || null;
+        this.stripeCustomerId = stripeCustomerId || null;
     }
 
     public canCreateTeam(): boolean {
@@ -96,10 +102,10 @@ class UserModel implements UserRoleValidator {
             throw new Error(UserInformation.USER_WITH_TEAM);
         }
 
-        this.roleValue = UserRoles.TEAM_ADMIN;
-        this.rolePermission = UserRolesDescriptions.TEAM_ADMIN_DESCRIPTION;
-        this.teamId = teamId;
-        this.updatedAt = new Date();
+        this.setRoleValue(UserRoles.TEAM_ADMIN);
+        this.setRolePermission(UserRolesDescriptions.TEAM_ADMIN_DESCRIPTION);
+        this.setTeamId(teamId);
+        this.setUpdatedAt(new Date());
     }
 
     public joinTeamAsMember(teamId: number): void {
@@ -107,10 +113,10 @@ class UserModel implements UserRoleValidator {
             throw new Error(UserInformation.USER_WITH_TEAM);
         }
 
-        this.roleValue = UserRoles.TEAM_MEMBER;
-        this.rolePermission = UserRolesDescriptions.TEAM_MEMBER_DESCRIPTION;
-        this.teamId = teamId;
-        this.updatedAt = new Date();
+        this.setRoleValue(UserRoles.TEAM_MEMBER);
+        this.setRolePermission(UserRolesDescriptions.TEAM_MEMBER_DESCRIPTION);
+        this.setTeamId(teamId);
+        this.setUpdatedAt(new Date());
     }
 
     public leaveTeam(): void {
@@ -118,19 +124,19 @@ class UserModel implements UserRoleValidator {
             throw new Error(UserInformation.USER_WITHOUT_TEAM);
         }
 
-        this.roleValue = UserRoles.WITHOUT_TEAM;
-        this.rolePermission = UserRolesDescriptions.WITHOUT_TEAM_DESCRIPTION;
-        this.teamId = null;
-        this.updatedAt = new Date();
+        this.setRoleValue(UserRoles.WITHOUT_TEAM);
+        this.setRolePermission(UserRolesDescriptions.WITHOUT_TEAM_DESCRIPTION);
+        this.setTeamId(null);
+        this.setUpdatedAt(new Date());
     }
 
     public promoteToSystemAdmin(): void {
         if (this.roleValue !== UserRoles.SYSTEM_ADMIN) {
             throw new Error(UserInformation.USER_WITH_TEAM);
         }
-        this.roleValue = UserRoles.SYSTEM_ADMIN;
-        this.rolePermission = UserRolesDescriptions.SYSTEM_ADMIN_DESCRIPTION;
-        this.updatedAt = new Date();
+        this.setRoleValue(UserRoles.SYSTEM_ADMIN);
+        this.setRolePermission(UserRolesDescriptions.SYSTEM_ADMIN_DESCRIPTION);
+        this.setUpdatedAt(new Date());
     }
 
     public getId(): number | undefined {
@@ -209,7 +215,7 @@ class UserModel implements UserRoleValidator {
         this.stateUser = stateUser;
     }
 
-    public setRolePermission(rolePermission: UserRolesDescriptions): void {
+    public setRolePermission(rolePermission: string): void {
         this.rolePermission = rolePermission;
     }
 
@@ -244,9 +250,9 @@ export interface UserModelInterface {
     cityUser: string;
     stateUser: string;
     rolePermission: string;
-    roleValue: UserRoles;
+    roleValue: number;
     teamId: number | null;
-    createdAt: Date;
+    createdAt: Date | undefined;
     updatedAt: Date | null;
     isDeleted: number;
     stripeCustomerId: string | null;

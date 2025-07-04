@@ -1,3 +1,4 @@
+import { TeamInformation } from "../enums/teamInformation";
 import { TeamErros } from "../models/teamModel";
 import { CreateTeam } from "../services/team/createTeam";
 import { DeleteTeam } from "../services/team/deleteUser";
@@ -92,20 +93,26 @@ teamRouter.routes.post("/", async (req, res) => {
     try {
         const nameTeam = req.body.nameTeam as string;
         const accessCode = req.body.accessCode as string;
-        
+        const userId = req.body.userId as number;
+
+        if (!userId) {
+            throw new Error(TeamInformation.USERID_INVALID);
+        }
+
         const teamService = CreateTeam.getInstance();
 
-        const newTeam = await teamService.execute({
+        const createdTeam = await teamService.execute({
             team: {
                 id: undefined,
                 nameTeam,
                 accessCode,
-                createdAt: undefined,
+                createdAt: new Date(),
                 updatedAt: null
-            }
+            },
+            userId
         });
 
-        res.status(201).send(newTeam);
+        res.status(201).send(createdTeam);
     } catch (error) {
         handleError(error, res);
     }
@@ -153,7 +160,7 @@ teamRouter.routes.delete("/:id", async (req, res) => {
         const teamService = DeleteTeam.getInstance();
         await teamService.execute({ id: Number(id) });
 
-        res.status(200).send({message: 'Equipe deletada com sucesso!'});
+        res.status(200).send({message: TeamInformation.TEAM_DELETED});
     } catch (error) {
         handleError(error, res);
     }

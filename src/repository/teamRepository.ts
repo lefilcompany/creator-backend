@@ -80,6 +80,7 @@ export class TeamRepository {
             },
             data: {
                 isDeleted: 1,
+                updatedAt: new Date(), 
             },
         });
         return deletedTeam;
