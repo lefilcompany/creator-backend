@@ -15,6 +15,7 @@
   "author": "LeFil Company | LIMA",
   "license": "ISC",
   "devDependencies": {
+    "@types/date-fns": "^2.5.3",
     "@types/express": "^5.0.0",
     "@types/node": "^22.7.7",
     "prisma": "^5.21.1",
@@ -24,6 +25,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.21.1",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
     "express": "^4.21.1",
     "postgres": "^3.4.7"

@@ -6,6 +6,7 @@ export enum UserInformation {
     STATE_REQUIRED = "O estado é obrigatório.",
     USER_WITH_TEAM = "Apenas usuários sem equipe podem criar uma equipe e serem promovidos a administrador.",
     USER_WITHOUT_TEAM = "O usuário não pertence a uma equipe.",
+    USER_ALREADY_IN_TEAM = "O usuário já pertence a uma equipe.",
     NEW_USER = "Novo usuário",
     TEAM_ADMIN = "Administrador da equipe",
     TEAM_MEMBER = "Membro da equipe",
@@ -23,4 +24,6 @@ export enum UserInformation {
     USER_PROMOTED_ADM = "Usuário promovido a administrador da equipe com sucesso.",
     USER_JOINED_TEAM = "Usuário entrou na equipe com sucesso.",
     USER_WRONG_TEAM = "Usuário não pertence à equipe.",
+    USER_IS_NOT_TEAM_ADMIN = "Usuário não é administrador da equipe.",
+    
 }

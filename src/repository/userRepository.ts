@@ -60,6 +60,10 @@ export class UserRepository {
     }
 
     async getUserByEmail(email: string): Promise<UserModelInterface | null> {
+        if (!email) {
+            throw new Error("Email não pode ser vazio ao buscar usuário.");
+        }
+
         return await this.client.user.findUnique({
             where: { email }
         });

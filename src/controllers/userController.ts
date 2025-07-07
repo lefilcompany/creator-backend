@@ -180,45 +180,6 @@ userRoute.routes.put("/:id", async (req, res) => {
         const rolePermission = req.body.rolePermission as string | undefined;
         const roleValue = req.body.roleValue as number | undefined;
         const teamId = req.body.teamId as number | undefined;
-        const stripeCustomerId = req.body.stripeCustomerId as string | undefined;
-
-        const userService = UpdateUser.getInstance();
-
-        const updatedUser = await userService.execute({
-            user: {
-                id: Number(id),
-                userName,
-                email,
-                password,
-                cityUser,
-                stateUser,
-                rolePermission: rolePermission || UserRolesDescriptions.WITHOUT_TEAM_DESCRIPTION,
-                roleValue: roleValue || UserRoles.WITHOUT_TEAM,
-                teamId: teamId || null,
-                createdAt: undefined, 
-                updatedAt: null, 
-                isDeleted: 0, 
-                stripeCustomerId: stripeCustomerId || null
-            }
-        });
-
-        res.status(200).send(updatedUser);
-    } catch (error: any) {
-        handleError(error, res);
-    }
-});
-
-userRoute.routes.put("/:id", async (req, res) => {
-    try {
-        const { id } = req.params;
-        const userName = req.body.userName as string;
-        const email = req.body.email as string;
-        const password = req.body.password as string;
-        const cityUser = req.body.cityUser as string;
-        const stateUser = req.body.stateUser as string;
-        const rolePermission = req.body.rolePermission as string | undefined;
-        const roleValue = req.body.roleValue as number | undefined;
-        const teamId = req.body.teamId as number | undefined;
         const isDeleted = req.body.isDeleted as number | undefined;
         const stripeCustomerId = req.body.stripeCustomerId as string | undefined;
 

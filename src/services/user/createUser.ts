@@ -28,6 +28,10 @@ export class CreateUser implements Service {
 
     public async execute({ user }: CreateUserInput): Promise<CreateUserOutput> {
         try {
+            if (!user.email) {
+                throw new Error(UserInformation.EMAIL_REQUIRED);
+            }
+
             const existingUser = await this.repository.getUserByEmail(user.email);
 
             // Se já existe e está ativo -> erro
@@ -75,8 +79,8 @@ export class CreateUser implements Service {
 
             const newUser = await this.repository.createUser(userObj);
 
-            return { 
-                user: newUser 
+            return {
+                user: newUser
             };
 
         } catch (error) {
