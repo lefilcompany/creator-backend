@@ -4,20 +4,20 @@ import { TeamModelInterface } from "../../models/teamModel";
 import UserModel, { UserModelInterface } from "../../models/userModel";
 import { TeamRepository } from "../../repository/teamRepository";
 import { UserRepository } from "../../repository/userRepository";
-import { ServiceInput, ServiceOutput, Service } from "../service";
+import { Service, ServiceInput, ServiceOutput } from "../service";
 
-interface LeaveTeamInput extends ServiceInput {
+interface JoinTeamAsMemberInput extends ServiceInput {
     userId: number;
     teamId: number;
 }
 
-interface LeaveTeamOutput extends ServiceOutput {
+interface JoinTeamAsMemberOutput extends ServiceOutput {
     user: UserModelInterface | null;
     message: string;
 }
 
-export class LeaveTeam implements Service {
-    private static instance: LeaveTeam;
+export class JoinTeamAsMember implements Service {
+    private static instance: JoinTeamAsMember;
     private repository: TeamRepository;
     private userRepository: UserRepository;
 
@@ -26,24 +26,24 @@ export class LeaveTeam implements Service {
         this.userRepository = UserRepository.get();
     }
 
-    public static getInstance(): LeaveTeam {
-        if (!LeaveTeam.instance) {
-            LeaveTeam.instance = new LeaveTeam();
+    public static getInstance(): JoinTeamAsMember {
+        if (!JoinTeamAsMember.instance) {
+            JoinTeamAsMember.instance = new JoinTeamAsMember();
         }
-        return LeaveTeam.instance;
+        return JoinTeamAsMember.instance;
     }
 
-    public async execute({ userId, teamId }: LeaveTeamInput): Promise<LeaveTeamOutput> {
+    public async execute({ userId, teamId }: JoinTeamAsMemberInput): Promise<JoinTeamAsMemberOutput> {
         try {
             const existingUser = await this.userRepository.getUserById(userId);
             const existingTeam = await this.repository.getTeamById(teamId);
 
-            if (!existingUser) {
-                throw new Error(UserInformation.USER_NOT_FOUND);
+            if(!existingTeam) {
+                throw new Error(TeamInformation.TEAM_NOT_FOUND);
             }
 
-            if (!existingTeam) {
-                throw new Error(TeamInformation.TEAM_NOT_FOUND);
+            if (!existingUser) {
+                throw new Error(UserInformation.USER_NOT_FOUND);
             }
 
             const user = new UserModel(
@@ -61,15 +61,15 @@ export class LeaveTeam implements Service {
                 existingUser.stripeCustomerId
             );
 
-            user.leaveTeam();
+            user.joinTeamAsMember(teamId);
             const updatedUser = await this.userRepository.updateUser(user);
 
             return {
                 user: updatedUser,
-                message: UserInformation.USER_WITHOUT_TEAM
+                message: UserInformation.USER_JOINED_TEAM
             };
-        } catch (error) {
-            throw new Error('Erro ao sair da equipe! ' + (error instanceof Error ? error.message : String(error)));
+        } catch (error: any) {
+            throw new Error('Erro ao tentar entrar na equipe! ' + (error instanceof Error ? error.message : String(error)));
         }
     }
 }
