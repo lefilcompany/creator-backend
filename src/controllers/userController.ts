@@ -1,4 +1,5 @@
 import { UserInformation } from "../enums/userInformation";
+import { UserRepository } from "../repository/userRepository";
 import { CreateUser } from "../services/user/createUser";
 import { DeleteUser } from "../services/user/deleteUser";
 import { GetAllUsers } from "../services/user/getAllUsers";
@@ -172,34 +173,44 @@ userRoute.routes.post("/", async (req, res) => {
 userRoute.routes.put("/:id", async (req, res) => {
     try {
         const { id } = req.params;
-        const userName = req.body.userName as string;
-        const email = req.body.email as string;
-        const password = req.body.password as string;
-        const cityUser = req.body.cityUser as string;
-        const stateUser = req.body.stateUser as string;
-        const rolePermission = req.body.rolePermission as string | undefined;
-        const roleValue = req.body.roleValue as number | undefined;
-        const teamId = req.body.teamId as number | undefined;
-        const isDeleted = req.body.isDeleted as number | undefined;
-        const stripeCustomerId = req.body.stripeCustomerId as string | undefined;
 
-        const userService = UpdateUser.getInstance(); 
+        const userRepository = UserRepository.get();
+        const existingUser = await userRepository.getUserById(Number(id));
+
+        if (!existingUser) {
+            throw new Error(UserInformation.USER_NOT_FOUND);
+        }
+
+        const {
+            userName,
+            email,
+            password,
+            cityUser,
+            stateUser,
+            rolePermission,
+            roleValue,
+            teamId,
+            isDeleted,
+            stripeCustomerId
+        } = req.body;
+
+        const userService = UpdateUser.getInstance();
 
         const updatedUser = await userService.execute({
             user: {
                 id: Number(id),
-                userName,
-                email,
-                password,
-                cityUser,
-                stateUser,
-                rolePermission: rolePermission || UserRolesDescriptions.WITHOUT_TEAM_DESCRIPTION,
-                roleValue: roleValue || UserRoles.WITHOUT_TEAM,
-                teamId: teamId || null,
-                createdAt: undefined, 
-                updatedAt: new Date(), 
-                isDeleted: isDeleted || 0,
-                stripeCustomerId: stripeCustomerId || null
+                userName: userName ?? existingUser.userName,
+                email: email ?? existingUser.email,
+                password: password ?? existingUser.password,
+                cityUser: cityUser ?? existingUser.cityUser,
+                stateUser: stateUser ?? existingUser.stateUser,
+                rolePermission: rolePermission ?? existingUser.rolePermission,
+                roleValue: roleValue ?? existingUser.roleValue,
+                teamId: teamId ?? existingUser.teamId,
+                createdAt: existingUser.createdAt,
+                updatedAt: new Date(),
+                isDeleted: isDeleted ?? existingUser.isDeleted,
+                stripeCustomerId: stripeCustomerId ?? existingUser.stripeCustomerId
             }
         });
 

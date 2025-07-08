@@ -65,7 +65,7 @@ teamRouter.routes.get("/:id", async (req, res) => {
     GET: Rota para obter um time específico pelo código de acesso
     Exemplo: GET /team/accessCode123
 */
-teamRouter.routes.get("/:acessCode", async (req, res) => {
+teamRouter.routes.get("/acessCode/:acessCode", async (req, res) => {
     try {
         const { acessCode } = req.params;
         const teamService = GetTeamByAcessCode.getInstance();

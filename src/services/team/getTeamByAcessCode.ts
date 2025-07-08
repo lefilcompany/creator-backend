@@ -27,7 +27,7 @@ export class GetTeamByAcessCode implements Service {
 
     public async execute({ accessCode }: GetTeamByAcessCodeInput): Promise<GetTeamByAcessCodeOutput> {
         return {
-            team: await this.repository.getTeamByAccessCode(accessCode)
+            team: await this.repository.getTeamByAccessCode(String(accessCode))
         }
     }
 }

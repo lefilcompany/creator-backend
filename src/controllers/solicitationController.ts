@@ -6,6 +6,9 @@ import { GetSolicitationById } from "../services/solicitations/getSolicitationBy
 import { GetSolicitationByUserId } from "../services/solicitations/getSolicitationByUserId";
 import { GetSolicitationsByStatus } from "../services/solicitations/getSolicitationsByStatus";
 import { GetSolicitationByTeamId } from "../services/solicitations/getSolicitationsByTeamId";
+import { UpdateSolicitationToAccepted } from "../services/solicitations/updateSolicitation/updateSolicitationToAccepted";
+import { UpdateSolicitationToCanceled } from "../services/solicitations/updateSolicitation/updateSolicitationToCanceled";
+import { UpdateSolicitationToRejected } from "../services/solicitations/updateSolicitation/updateSolicitationToRejected";
 import { handleError } from "../utils/errorHandler";
 import { AppRoute } from "./AppRoute";
 
@@ -102,6 +105,114 @@ solicitationRouter.routes.post("/", async (req, res) => {
         });
 
         res.status(201).send(newSolicitation);
+    } catch (error: any) {
+        handleError(error, res);
+    }
+});
+
+solicitationRouter.routes.put("/accept/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { adminId } = req.body;
+
+        if (!adminId) {
+            throw new Error(SolicitationInformation.INVALID_REQUEST);
+        }
+
+        const getSolicitationService = GetSolicitationById.getInstance();
+        const result = await getSolicitationService.execute({ id: Number(id) });
+
+        if (!result.solicitation) {
+            throw new Error(SolicitationInformation.SOLICITATION_NOT_FOUND);
+        }
+
+        const solicitationService = UpdateSolicitationToAccepted.getInstance();
+
+        const updatedSolicitation = await solicitationService.execute({
+            solicitation: {
+                id: result.solicitation.id,
+                userId: result.solicitation.userId,
+                teamId: result.solicitation.teamId,
+                status: SolicitationStatus.ACCEPTED,
+                createdAt: result.solicitation.createdAt,
+                updatedAt: new Date(),
+                isDeleted: result.solicitation.isDeleted ?? 0,
+            },
+            adminId: Number(adminId)
+        });
+
+        res.status(200).send(updatedSolicitation);
+    } catch (error: any) {
+        handleError(error, res);
+    }
+});
+
+solicitationRouter.routes.put("/reject/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { adminId } = req.body;
+
+        if (!adminId) {
+            throw new Error(SolicitationInformation.INVALID_REQUEST);
+        }
+
+        const getSolicitationService = GetSolicitationById.getInstance();
+        const result = await getSolicitationService.execute({ id: Number(id) });
+
+        if (!result.solicitation) {
+            throw new Error(SolicitationInformation.SOLICITATION_NOT_FOUND);
+        }
+
+        const solicitationService = UpdateSolicitationToRejected.getInstance();
+
+        const updatedSolicitation = await solicitationService.execute({
+            solicitation: {
+                id: result.solicitation.id,
+                userId: result.solicitation.userId,
+                teamId: result.solicitation.teamId,
+                status: SolicitationStatus.REJECTED,
+                createdAt: result.solicitation.createdAt,
+                updatedAt: new Date(),
+                isDeleted: result.solicitation.isDeleted ?? 0,
+            },
+            adminId: Number(adminId)
+        });
+        res.status(200).send(updatedSolicitation);
+    } catch (error: any) {
+        handleError(error, res);
+    }
+});
+
+solicitationRouter.routes.put("/canceled/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { userId } = req.body;
+
+        if (!userId) {
+            throw new Error(SolicitationInformation.INVALID_REQUEST);
+        }
+
+        const getSolicitationService = GetSolicitationById.getInstance();
+        const result = await getSolicitationService.execute({ id: Number(id) });
+
+        if (!result.solicitation) {
+            throw new Error(SolicitationInformation.SOLICITATION_NOT_FOUND);
+        }
+
+        const solicitationService = UpdateSolicitationToCanceled.getInstance();
+        const updatedSolicitation = await solicitationService.execute({
+            solicitation: {
+                id: result.solicitation.id,
+                userId: result.solicitation.userId,
+                teamId: result.solicitation.teamId,
+                status: SolicitationStatus.CANCELED,
+                createdAt: result.solicitation.createdAt,
+                updatedAt: new Date(),
+                isDeleted: result.solicitation.isDeleted ?? 0,
+            },
+            userId: Number(userId)
+        });
+        res.status(200).send(updatedSolicitation);
     } catch (error: any) {
         handleError(error, res);
     }

@@ -42,7 +42,7 @@ export class TeamRepository {
     async getTeamByAccessCode(accessCode: string): Promise<TeamModelInterface | null> {
         const team = await this.client.team.findUnique({
             where: {
-                accessCode: accessCode,
+                accessCode: String(accessCode),
             },
         });
         return team;
@@ -80,9 +80,22 @@ export class TeamRepository {
             },
             data: {
                 isDeleted: 1,
-                updatedAt: new Date(), 
+                updatedAt: new Date(),
             },
         });
+
+        await this.client.user.updateMany({
+            where: {
+                teamId: id,
+            },
+            data: {
+                roleValue: 0,
+                rolePermission: "Usuário sem equipe",
+                teamId: null,
+                updatedAt: new Date(),
+            },
+        });
+
         return deletedTeam;
     }
 }

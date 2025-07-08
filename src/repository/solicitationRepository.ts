@@ -84,9 +84,13 @@ export class SolicitationRepository {
     }
 
     public async acceptSolicitation(solicitation: SolicitationModel, adminTeamId: number) {
-        if (!solicitation || solicitation.getStatus() !== 0) {
-            throw new Error(SolicitationInformation.SOLICITATION_NOT_PENDING);
+        if (!solicitation) {
+            throw new Error(SolicitationInformation.SOLICITATION_NOT_FOUND);
         }
+
+        // if(solicitation.getStatus() !== SolicitationStatus.PENDING) {
+        //     throw new Error(SolicitationInformation.SOLICITATION_NOT_PENDING);
+        // }
 
         const userRepository = UserRepository.get();
         const user = await userRepository.getUserById(adminTeamId);

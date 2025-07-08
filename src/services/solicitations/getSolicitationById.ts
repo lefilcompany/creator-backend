@@ -26,9 +26,8 @@ export class GetSolicitationById implements Service {
     }
 
     public async execute({ id }: GetSolicitationByIdInput): Promise<GetSolicitationByIdOutput> {
-        const solicitation = await this.repository.getSolicitationById(id);
-        return { 
-            solicitation 
-        };
+        return {
+            solicitation: await this.repository.getSolicitationById(id)
+        }
     }
 }
