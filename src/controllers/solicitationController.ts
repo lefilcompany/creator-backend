@@ -1,4 +1,5 @@
 import { SolicitationInformation, SolicitationStatus } from "../enums/solicitationInformation";
+import { validateToken } from "../middlewares/validateToken";
 import { CreateSolicitation } from "../services/solicitations/createSolicitation";
 import { DeleteSolicitation } from "../services/solicitations/deleteSolicitation";
 import { GetAllSolicitations } from "../services/solicitations/getAllSolicitations";
@@ -14,7 +15,7 @@ import { AppRoute } from "./AppRoute";
 
 const solicitationRouter = new AppRoute("solicitation");
 
-solicitationRouter.routes.get("/", async (req, res) => {
+solicitationRouter.routes.get("/", validateToken, async (req, res) => {
     try {
         const solicitationService = GetAllSolicitations.getInstance();
 
@@ -25,7 +26,7 @@ solicitationRouter.routes.get("/", async (req, res) => {
     }
 });
 
-solicitationRouter.routes.get("/:id", async (req, res) => {
+solicitationRouter.routes.get("/:id", validateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const solicitationService = GetSolicitationById.getInstance();
@@ -41,7 +42,7 @@ solicitationRouter.routes.get("/:id", async (req, res) => {
     }
 });
 
-solicitationRouter.routes.get("/user/:userId", async (req, res) => {
+solicitationRouter.routes.get("/user/:userId", validateToken, async (req, res) => {
     try {
         const { userId } = req.params;
         const solicitationService = GetSolicitationByUserId.getInstance();
@@ -57,7 +58,7 @@ solicitationRouter.routes.get("/user/:userId", async (req, res) => {
     }
 });
 
-solicitationRouter.routes.get("/team/:teamId", async (req, res) => {
+solicitationRouter.routes.get("/team/:teamId", validateToken, async (req, res) => {
     try {
         const { teamId } = req.params;
         const solicitationService = GetSolicitationByTeamId.getInstance();
@@ -71,7 +72,7 @@ solicitationRouter.routes.get("/team/:teamId", async (req, res) => {
     }
 });
 
-solicitationRouter.routes.get("/status/:status", async (req, res) => {
+solicitationRouter.routes.get("/status/:status", validateToken, async (req, res) => {
     try {
         const { status } = req.params;
         const solicitationService = GetSolicitationsByStatus.getInstance();
@@ -83,7 +84,7 @@ solicitationRouter.routes.get("/status/:status", async (req, res) => {
     }
 });
 
-solicitationRouter.routes.post("/", async (req, res) => {
+solicitationRouter.routes.post("/", validateToken, async (req, res) => {
     try {
         const { userId, teamId } = req.body;
         if (!userId || !teamId) {
@@ -110,7 +111,7 @@ solicitationRouter.routes.post("/", async (req, res) => {
     }
 });
 
-solicitationRouter.routes.put("/accept/:id", async (req, res) => {
+solicitationRouter.routes.put("/accept/:id", validateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const { adminId } = req.body;
@@ -147,7 +148,7 @@ solicitationRouter.routes.put("/accept/:id", async (req, res) => {
     }
 });
 
-solicitationRouter.routes.put("/reject/:id", async (req, res) => {
+solicitationRouter.routes.put("/reject/:id", validateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const { adminId } = req.body;
@@ -183,7 +184,7 @@ solicitationRouter.routes.put("/reject/:id", async (req, res) => {
     }
 });
 
-solicitationRouter.routes.put("/canceled/:id", async (req, res) => {
+solicitationRouter.routes.put("/canceled/:id", validateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const { userId } = req.body;
@@ -218,7 +219,7 @@ solicitationRouter.routes.put("/canceled/:id", async (req, res) => {
     }
 });
 
-solicitationRouter.routes.delete("/:id", async (req, res) => {
+solicitationRouter.routes.delete("/:id", validateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const solicitationService = DeleteSolicitation.getInstance();

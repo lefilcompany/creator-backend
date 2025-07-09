@@ -2,6 +2,9 @@ import { UserInformation } from "../../enums/userInformation";
 import UserModel, { UserModelInterface } from "../../models/userModel";
 import { UserRepository } from "../../repository/userRepository";
 import { ServiceInput, ServiceOutput, Service } from "../service";
+import bcrypt from 'bcrypt';
+
+const SALT_ROUNDS = 10;
 
 interface CreateUserInput extends ServiceInput {
     user: UserModelInterface;
@@ -46,7 +49,7 @@ export class CreateUser implements Service {
                         existingUser.id,
                         user.userName,
                         user.email,
-                        user.password,
+                        await bcrypt.hash(user.password, SALT_ROUNDS),
                         user.cityUser,
                         user.stateUser,
                         user.rolePermission,
@@ -66,7 +69,7 @@ export class CreateUser implements Service {
                 user.id,
                 user.userName,
                 user.email,
-                user.password,
+                await bcrypt.hash(user.password, SALT_ROUNDS),
                 user.cityUser,
                 user.stateUser,
                 user.rolePermission,

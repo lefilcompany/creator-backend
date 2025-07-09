@@ -1,6 +1,9 @@
 import TeamModel, { TeamModelInterface } from "../../models/teamModel";
 import { TeamRepository } from "../../repository/teamRepository";
 import { Service, ServiceInput, ServiceOutput } from "../service";
+import bcrypt from 'bcrypt';
+
+const SALT_ROUNDS = 10;
 
 interface UpdateTeamInput extends ServiceInput {
     team: TeamModelInterface;
@@ -29,7 +32,7 @@ export class UpdateTeam implements Service {
         const teamObj = new TeamModel(
             team.id,
             team.nameTeam,
-            team.accessCode,
+            await bcrypt.hash(team.accessCode, SALT_ROUNDS),
             new Date(),
             team.isDeleted ?? 0
         );

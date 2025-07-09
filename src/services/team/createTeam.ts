@@ -5,6 +5,9 @@ import UserModel, { UserModelInterface } from "../../models/userModel";
 import { TeamRepository } from "../../repository/teamRepository";
 import { UserRepository } from "../../repository/userRepository";
 import { Service, ServiceInput, ServiceOutput } from "../service";
+import bcrypt from 'bcrypt';
+
+const SALT_ROUNDS = 10;
 
 interface CreateTeamInput extends ServiceInput {
     team: TeamModelInterface;
@@ -69,7 +72,7 @@ export class CreateTeam implements Service {
                     new TeamModel(
                         existingTeam.id,
                         team.nameTeam,
-                        team.accessCode,
+                        await bcrypt.hash(team.accessCode, SALT_ROUNDS),
                         new Date(),
                         0
                     )
@@ -81,7 +84,7 @@ export class CreateTeam implements Service {
             const teamObj = new TeamModel(
                 team.id,
                 team.nameTeam,
-                team.accessCode,
+                await bcrypt.hash(team.accessCode, SALT_ROUNDS),
                 new Date(),
                 0
             );

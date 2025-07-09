@@ -25,5 +25,8 @@ export enum UserInformation {
     USER_JOINED_TEAM = "Usuário entrou na equipe com sucesso.",
     USER_WRONG_TEAM = "Usuário não pertence à equipe.",
     USER_IS_NOT_TEAM_ADMIN = "Usuário não é administrador da equipe.",
-    
+    INVALID_LOGIN_CREDENTIALS = "Credenciais de login inválidas.",
+    INVALID_PASSWORD = "Senha inválida.",
+    USER_NOT_AUTHORIZED = "Usuário não autorizado.",
+    USER_AUTHORIZED = "Usuário válido! Login realizado com sucesso.",
 }

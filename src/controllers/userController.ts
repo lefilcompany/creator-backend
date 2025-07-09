@@ -11,6 +11,12 @@ import { UpdateUser } from "../services/user/updateUser";
 import { handleError } from "../utils/errorHandler";
 import { UserRolesDescriptions, UserRoles } from "../utils/userRoles";
 import { AppRoute } from "./AppRoute";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import { validateToken } from "../middlewares/validateToken";
+import bcrypt from "bcrypt";
+
+dotenv.config();
 
 const userRoute = new AppRoute("user");
 
@@ -18,7 +24,7 @@ const userRoute = new AppRoute("user");
     GET: Rota para obter todos os usuários
     Exemplo: GET /user
 */
-userRoute.routes.get("/", async (req, res) => {
+userRoute.routes.get("/", validateToken, async (req, res) => {
     try {
         const userService = GetAllUsers.getInstance();
         const allUsers = await userService.execute();
@@ -32,7 +38,7 @@ userRoute.routes.get("/", async (req, res) => {
     GET: Rota para obter todos os usuários ativos
     Exemplo: GET /user/active
 */
-userRoute.routes.get('/active', async (req, res) => {
+userRoute.routes.get('/active',validateToken, async (req, res) => {
     try {
         const userService = GetAllUsersActive.getInstance();
         const activeUsers = await userService.execute();
@@ -47,7 +53,7 @@ userRoute.routes.get('/active', async (req, res) => {
     GET: Rota para obter um usuário específico pelo ID
     Exemplo: GET /user/1
 */
-userRoute.routes.get("/:id", async (req, res) => {
+userRoute.routes.get("/:id", validateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const userService = GetUserById.getInstance();
@@ -68,7 +74,7 @@ userRoute.routes.get("/:id", async (req, res) => {
     Exemplo: GET /user/team/:teamId
 */
 //Ver se faz sentido isso aqui
-userRoute.routes.get('/team/:teamId', async (req, res) => {
+userRoute.routes.get('/team/:teamId', validateToken, async (req, res) => {
     try {
         const { teamId } = req.params;
         const userService = GetUsersByTeamId.getInstance();
@@ -84,8 +90,7 @@ userRoute.routes.get('/team/:teamId', async (req, res) => {
     Get: Rota para obter usuários ativos por ID da equipe
     Exemplo: GET /user/team/:teamId/active
 */
-//Ver se faz sentido isso aqui
-userRoute.routes.get('/team/:teamId/active', async (req, res) => {
+userRoute.routes.get('/team/:teamId/active', validateToken, async (req, res) => {
     try {
         const { teamId } = req.params;
         const userService = GetUsersByTeamIdActive.getInstance();
@@ -98,7 +103,60 @@ userRoute.routes.get('/team/:teamId/active', async (req, res) => {
 });
 
 /*
-    POST: Rota para criar um novo usuário
+    POST: Rota para login de usuário
+    Exemplo: POST /user/login
+    Body (JSON):
+    {
+        "email": "exemplo@email.com",
+        "password": "123456"
+    }
+    Retorno: Token JWT se as credenciais estiverem corretas
+*/
+userRoute.routes.post("/login", async (req, res) => {
+    try {
+        const userEmail = req.body.email as string;
+        const userPassword = req.body.password as string;
+
+        if (!userEmail || !userPassword) {
+            throw new Error(UserInformation.INVALID_LOGIN_CREDENTIALS);
+        }
+
+        const userRepository = UserRepository.get();
+        const user = await userRepository.getUserByEmail(userEmail);
+
+        if (!user) {
+            throw new Error(UserInformation.USER_NOT_FOUND);
+        }
+
+        const isPasswordValid = await bcrypt.compare(userPassword, user.password);
+
+        if (!isPasswordValid) {
+            throw new Error(UserInformation.INVALID_PASSWORD);
+        }
+
+        const jwtSecret = process.env.JWT_SECRET;
+
+        if (!jwtSecret) {
+            throw new Error(UserInformation.USER_NOT_AUTHORIZED);
+        }
+
+        const token = jwt.sign({userEmail}, jwtSecret, {expiresIn: '1h'});       
+
+        res.status(200).send({
+            statusCode: 200,
+            message: UserInformation.USER_AUTHORIZED,
+            data: {
+                token
+            }
+        });
+    } catch (error: any) {
+        console.error(error);
+        handleError(error, res);
+    }
+});
+
+/*
+    POST: Rota para criar um novo usuário (cadastro)
     Exemplo: POST /user
     Body (JSON):
     {
@@ -170,7 +228,7 @@ userRoute.routes.post("/", async (req, res) => {
     }
     Retorno: Usuário atualizado com sucesso
 */
-userRoute.routes.put("/:id", async (req, res) => {
+userRoute.routes.put("/:id", validateToken, async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -225,7 +283,7 @@ userRoute.routes.put("/:id", async (req, res) => {
     Exemplo: DELETE /user/:id
     Retorno: Usuário excluído com sucesso
 */
-userRoute.routes.delete("/:id", async (req, res) => {
+userRoute.routes.delete("/:id", validateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const userService = DeleteUser.getInstance();

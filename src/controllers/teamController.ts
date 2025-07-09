@@ -1,4 +1,5 @@
 import { TeamInformation } from "../enums/teamInformation";
+import { validateToken } from "../middlewares/validateToken";
 import { TeamErros } from "../models/teamModel";
 import { CreateTeam } from "../services/team/createTeam";
 import { DeleteTeam } from "../services/team/deleteUser";
@@ -16,7 +17,7 @@ const teamRouter = new AppRoute("team");
     GET: Rota para obter todos os times
     Exemplo: GET /team
 */
-teamRouter.routes.get("/", async (req, res) => {
+teamRouter.routes.get("/", validateToken, async (_, res) => {
     try {
         const teamService = GetAllTeams.getInstance();
         const allTeams = await teamService.execute();
@@ -30,7 +31,7 @@ teamRouter.routes.get("/", async (req, res) => {
     GET: Rota para obter todos os times ativos
     Exemplo: GET /team/active
 */
-teamRouter.routes.get('/active', async (req, res) => {
+teamRouter.routes.get('/active', validateToken, async (_, res) => {
     try {
         const teamService = GetAllTeamsActive.getInstance();
         const activeTeams = await teamService.execute();
@@ -45,7 +46,7 @@ teamRouter.routes.get('/active', async (req, res) => {
     GET: Rota para obter um time específico pelo ID
     Exemplo: GET /team/1
 */
-teamRouter.routes.get("/:id", async (req, res) => {
+teamRouter.routes.get("/:id", validateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const teamService = GetTeamById.getInstance();
@@ -65,7 +66,7 @@ teamRouter.routes.get("/:id", async (req, res) => {
     GET: Rota para obter um time específico pelo código de acesso
     Exemplo: GET /team/accessCode123
 */
-teamRouter.routes.get("/acessCode/:acessCode", async (req, res) => {
+teamRouter.routes.get("/acessCode/:acessCode", validateToken, async (req, res) => {
     try {
         const { acessCode } = req.params;
         const teamService = GetTeamByAcessCode.getInstance();
@@ -89,7 +90,7 @@ teamRouter.routes.get("/acessCode/:acessCode", async (req, res) => {
         "accessCode": "Código de Acesso"
     }
 */
-teamRouter.routes.post("/", async (req, res) => {
+teamRouter.routes.post("/", validateToken, async (req, res) => {
     try {
         const nameTeam = req.body.nameTeam as string;
         const accessCode = req.body.accessCode as string;
@@ -126,7 +127,7 @@ teamRouter.routes.post("/", async (req, res) => {
         "accessCode": "Novo Código de Acesso"
     }
 */
-teamRouter.routes.put("/:id", async (req, res) => {
+teamRouter.routes.put("/:id", validateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const nameTeam = req.body.nameTeam as string;
@@ -154,7 +155,7 @@ teamRouter.routes.put("/:id", async (req, res) => {
     DELETE: Rota para deletar um time
     Exemplo: DELETE /team/1
 */
-teamRouter.routes.delete("/:id", async (req, res) => {
+teamRouter.routes.delete("/:id", validateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const teamService = DeleteTeam.getInstance();

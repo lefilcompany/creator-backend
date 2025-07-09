@@ -1,5 +1,8 @@
 import { UserInformation } from "../enums/userInformation";
 import { UserRoles, UserRolesDescriptions, UserRoleValidator } from "../utils/userRoles";
+import bcrypt from 'bcrypt';
+
+const SALT_ROUNDS = 10;
 
 class UserModel implements UserRoleValidator {
     private id: number | undefined;
@@ -139,6 +142,10 @@ class UserModel implements UserRoleValidator {
         this.setUpdatedAt(new Date());
     }
 
+    public async checkPassword(password: string): Promise<boolean> {
+        return await bcrypt.compare(password, this.password);
+    }
+
     public getId(): number | undefined {
         return this.id;
     }
@@ -203,8 +210,12 @@ class UserModel implements UserRoleValidator {
         this.email = email;
     }
 
-    public setPassword(password: string): void {
-        this.password = password;
+    public async setPassword(password: string): Promise<void> {
+        if(!password || password.length < 6 || password.trim() === '') {
+            throw new Error(UserInformation.PASSWORD_REQUIRED);
+        }
+
+        this.password = await bcrypt.hash(password, SALT_ROUNDS);
     }
 
     public setCityUser(cityUser: string): void {

@@ -1,6 +1,9 @@
 import UserModel, { UserModelInterface } from "../../models/userModel";
 import { UserRepository } from "../../repository/userRepository";
 import { Service, ServiceInput, ServiceOutput } from "../service";
+import bcrypt from 'bcrypt';
+
+const SALT_ROUNDS = 10; 
 
 interface UpdateUserInput extends ServiceInput {
     user: UserModelInterface;
@@ -26,6 +29,10 @@ export class UpdateUser implements Service {
     }
 
     public async execute({ user }: UpdateUserInput): Promise<UpdateUserOutput> {
+        if(user.password) {
+            user.password = await bcrypt.hash(user.password, SALT_ROUNDS)
+        }
+
         const userObj = new UserModel(
             user.id,
             user.userName,

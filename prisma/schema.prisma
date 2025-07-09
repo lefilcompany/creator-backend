@@ -37,6 +37,7 @@ model User {
   planning Planning[] // Relacionamento com planejamentos criados pelo usuário
   reviews  Review[] // Relacionamento com revisões criadas pelo usuário
   solicitations Solicitation[] // Relacionamento com solicitações de equipe
+  Brand Brand[]
 }
 
 model Team {
@@ -79,21 +80,37 @@ model Plan {
 }
 
 model Brand {
-  id        Int       @id @default(autoincrement()) // ID da marca
-  name      String // Nome da marca
-  teamId    Int // ID da equipe responsável pela marca
-  createdAt DateTime  @default(now()) // Data de criação da marca
-  updatedAt DateTime? // Data de atualização da marca
-  isDeleted Int       @default(0) // Flag para indicar exclusão lógica
+  id                Int       @id @default(autoincrement())
+  name              String
+  teamId            Int
+  userId            Int
+  valueProposition  String    
+  brandPillars      String
+  brandMission      String
+  brandInspiration  String
+  currentObjective  String
+  numericTarget     String
+  restrictions      String
+  brandHashtags     String
+  referenceContents String
+  importantDates    String
+  relevantContent   String
+  brandCrisis       String
+  influencersAction Int
+  brandManual       Int
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @default(now())
+  isDeleted         Int       @default(0)
 
-  team Team @relation(fields: [teamId], references: [id])
-
-  themes   Theme[] // Relacionamento com temas
-  personas Persona[] // Relacionamento com personas
-  contents Content[] // Relacionamento com conteúdos
-  planning Planning[] // Relacionamento com planejamentos
-  reviews  Review[] // Relacionamento com revisões
+  team     Team     @relation(fields: [teamId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+  themes   Theme[]                                                          
+  personas Persona[]
+  contents Content[]
+  planning Planning[]
+  reviews  Review[]
 }
+
 
 model Theme {
   id             Int    @id @default(autoincrement()) // Identificador único do tema
@@ -119,22 +136,25 @@ model Theme {
 }
 
 model Persona {
-  id             Int    @id @default(autoincrement()) // Identificador único da persona
+  id             Int      @id @default(autoincrement())
   brandId        Int
   teamId         Int
-  name           String // Nome da persona
-  gender         String // Gênero
-  age            String // Idade
-  location       String // Localização
-  positionDegree String @db.VarChar(512) // Cargo e formação acadêmica
-  hobbies        String @db.VarChar(512) // Hobbies e interesses
-  consumeHabit   String @db.VarChar(512) // Hábitos de consumo
-  goals          String @db.VarChar(512) // Metas e objetivos
-  challenge      String @db.VarChar(512) // Desafios enfrentados
+  name           String
+  gender         String
+  age            String
+  location       String
+  positionDegree String   // Cargo e formação acadêmica
+  beliefs        String   // Crenças e interesses
+  contentHabit   String   // Hábitos de consumo
+  mainObjective  String   // Metas e objetivos
+  challenge      String   // Desafios enfrentados
+  favoriteVoice  String   // Tom de voz preferido
+  buyJourney     String   // Estágio da jornada de compra
+  interestTrigger String  // Gatilhos de interesse
 
-  createdAt DateTime  @default(now()) // Data de criação
-  updatedAt DateTime? // Data de atualização
-  isDeleted Int       @default(0) // Exclusão lógica (0 = ativa)
+  createdAt      DateTime @default(now()) // Data de criação
+  updatedAt      DateTime @default(now()) // Data de atualização
+  isDeleted      Int      @default(0)     // Exclusão lógica (0 = ativa)
 
   brand    Brand     @relation(fields: [brandId], references: [id]) // Marca relacionada
   team     Team      @relation(fields: [teamId], references: [id]) // Equipe relacionada
