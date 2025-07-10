@@ -21,7 +21,7 @@ teamRouter.routes.get("/", validateToken, async (_, res) => {
     try {
         const teamService = GetAllTeams.getInstance();
         const allTeams = await teamService.execute();
-        res.status(200).send(allTeams);
+        res.status(200).json(allTeams);
     } catch (error: any) {
         handleError(error, res);
     }
@@ -36,7 +36,7 @@ teamRouter.routes.get('/active', validateToken, async (_, res) => {
         const teamService = GetAllTeamsActive.getInstance();
         const activeTeams = await teamService.execute();
 
-        res.status(200).send(activeTeams);
+        res.status(200).json(activeTeams);
     } catch (error: any) {
         handleError(error, res);
     }
@@ -56,7 +56,7 @@ teamRouter.routes.get("/:id", validateToken, async (req, res) => {
             throw new Error(TeamErros.TEAM_NOT_FOUND);
         }
 
-        res.status(200).send(team);
+        res.status(200).json(team);
     } catch (error) {
         handleError(error, res);
     }
@@ -76,7 +76,7 @@ teamRouter.routes.get("/acessCode/:acessCode", validateToken, async (req, res) =
             throw new Error(TeamErros.TEAM_NOT_FOUND);
         }
 
-        res.status(200).send(team);
+        res.status(200).json(team);
     } catch (error) {
         handleError(error, res);
     }
@@ -113,7 +113,7 @@ teamRouter.routes.post("/", validateToken, async (req, res) => {
             userId
         });
 
-        res.status(201).send(createdTeam);
+        res.status(201).json(createdTeam);
     } catch (error) {
         handleError(error, res);
     }
@@ -145,7 +145,7 @@ teamRouter.routes.put("/:id", validateToken, async (req, res) => {
             }
         });
 
-        res.status(200).send(updatedTeam);
+        res.status(200).json(updatedTeam);
     } catch (error) {
         handleError(error, res);
     }
@@ -161,10 +161,10 @@ teamRouter.routes.delete("/:id", validateToken, async (req, res) => {
         const teamService = DeleteTeam.getInstance();
         await teamService.execute({ id: Number(id) });
 
-        res.status(200).send({message: TeamInformation.TEAM_DELETED});
+        res.status(200).json({message: TeamInformation.TEAM_DELETED});
     } catch (error) {
         handleError(error, res);
     }
 });
 
-export { teamRouter };
+export default teamRouter;

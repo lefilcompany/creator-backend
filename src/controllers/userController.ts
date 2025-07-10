@@ -28,7 +28,7 @@ userRoute.routes.get("/", validateToken, async (req, res) => {
     try {
         const userService = GetAllUsers.getInstance();
         const allUsers = await userService.execute();
-        res.status(200).send(allUsers);
+        res.status(200).json(allUsers);
     } catch (error: any) {
         handleError(error, res);
     }
@@ -43,7 +43,7 @@ userRoute.routes.get('/active',validateToken, async (req, res) => {
         const userService = GetAllUsersActive.getInstance();
         const activeUsers = await userService.execute();
 
-        res.status(200).send(activeUsers);
+        res.status(200).json(activeUsers);
     } catch (error: any) {
         handleError(error, res);
     }
@@ -63,7 +63,7 @@ userRoute.routes.get("/:id", validateToken, async (req, res) => {
             throw new Error(UserInformation.USER_NOT_FOUND);
         }
 
-        res.status(200).send(user);
+        res.status(200).json(user);
     } catch (error) {
         handleError(error, res);
     }
@@ -80,7 +80,7 @@ userRoute.routes.get('/team/:teamId', validateToken, async (req, res) => {
         const userService = GetUsersByTeamId.getInstance();
         const usersByTeam = await userService.execute({ teamId: Number(teamId) });
 
-        res.status(200).send(usersByTeam);
+        res.status(200).json(usersByTeam);
     } catch (error) {
         handleError(error, res);
     }
@@ -96,7 +96,7 @@ userRoute.routes.get('/team/:teamId/active', validateToken, async (req, res) => 
         const userService = GetUsersByTeamIdActive.getInstance();
         const activeUsersByTeam = await userService.execute({ teamId: Number(teamId) });
 
-        res.status(200).send(activeUsersByTeam);
+        res.status(200).json(activeUsersByTeam);
     } catch (error) {
         handleError(error, res);
     }
@@ -142,7 +142,7 @@ userRoute.routes.post("/login", async (req, res) => {
 
         const token = jwt.sign({userEmail}, jwtSecret, {expiresIn: '1h'});       
 
-        res.status(200).send({
+        res.status(200).json({
             statusCode: 200,
             message: UserInformation.USER_AUTHORIZED,
             data: {
@@ -204,7 +204,7 @@ userRoute.routes.post("/", async (req, res) => {
             }
         });
 
-        res.status(201).send(newUser);
+        res.status(201).json(newUser);
     } catch (error: any) {
         handleError(error, res);
     }
@@ -272,7 +272,7 @@ userRoute.routes.put("/:id", validateToken, async (req, res) => {
             }
         });
 
-        res.status(200).send(updatedUser);
+        res.status(200).json(updatedUser);
     } catch (error: any) {
         handleError(error, res);
     }
@@ -289,7 +289,7 @@ userRoute.routes.delete("/:id", validateToken, async (req, res) => {
         const userService = DeleteUser.getInstance();
         await userService.execute({ id: Number(id) });
 
-        res.status(200).send({ message: UserInformation.USER_DELETED });
+        res.status(200).json({ message: UserInformation.USER_DELETED });
     } catch (error) {
         handleError(error, res);
     }

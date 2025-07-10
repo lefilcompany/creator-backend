@@ -20,7 +20,7 @@ solicitationRouter.routes.get("/", validateToken, async (req, res) => {
         const solicitationService = GetAllSolicitations.getInstance();
 
         const allSolicitations = await solicitationService.execute();
-        res.status(200).send(allSolicitations);
+        res.status(200).json(allSolicitations);
     } catch (error: any) {
         handleError(error, res);
     }
@@ -36,7 +36,7 @@ solicitationRouter.routes.get("/:id", validateToken, async (req, res) => {
             throw new Error(SolicitationInformation.SOLICITATION_NOT_FOUND);
         }
 
-        res.status(200).send(solicitation);
+        res.status(200).json(solicitation);
     } catch (error: any) {
         handleError(error, res);
     }
@@ -52,7 +52,7 @@ solicitationRouter.routes.get("/user/:userId", validateToken, async (req, res) =
             throw new Error(SolicitationInformation.SOLICITATION_NOT_FOUND);
         }
 
-        res.status(200).send(userSolicitation);
+        res.status(200).json(userSolicitation);
     } catch (error: any) {
         handleError(error, res);
     }
@@ -66,7 +66,7 @@ solicitationRouter.routes.get("/team/:teamId", validateToken, async (req, res) =
         if (!teamSolicitation) {
             throw new Error(SolicitationInformation.SOLICITATION_NOT_FOUND);
         }
-        res.status(200).send(teamSolicitation);
+        res.status(200).json(teamSolicitation);
     } catch (error: any) {
         handleError(error, res);
     }
@@ -78,7 +78,7 @@ solicitationRouter.routes.get("/status/:status", validateToken, async (req, res)
         const solicitationService = GetSolicitationsByStatus.getInstance();
         const solicitationsByStatus = await solicitationService.execute({ status: Number(status) });
 
-        res.status(200).send(solicitationsByStatus);
+        res.status(200).json(solicitationsByStatus);
     } catch (error: any) {
         handleError(error, res);
     }
@@ -105,7 +105,7 @@ solicitationRouter.routes.post("/", validateToken, async (req, res) => {
             }
         });
 
-        res.status(201).send(newSolicitation);
+        res.status(201).json(newSolicitation);
     } catch (error: any) {
         handleError(error, res);
     }
@@ -142,7 +142,7 @@ solicitationRouter.routes.put("/accept/:id", validateToken, async (req, res) => 
             adminId: Number(adminId)
         });
 
-        res.status(200).send(updatedSolicitation);
+        res.status(200).json(updatedSolicitation);
     } catch (error: any) {
         handleError(error, res);
     }
@@ -178,7 +178,7 @@ solicitationRouter.routes.put("/reject/:id", validateToken, async (req, res) => 
             },
             adminId: Number(adminId)
         });
-        res.status(200).send(updatedSolicitation);
+        res.status(200).json(updatedSolicitation);
     } catch (error: any) {
         handleError(error, res);
     }
@@ -213,7 +213,7 @@ solicitationRouter.routes.put("/canceled/:id", validateToken, async (req, res) =
             },
             userId: Number(userId)
         });
-        res.status(200).send(updatedSolicitation);
+        res.status(200).json(updatedSolicitation);
     } catch (error: any) {
         handleError(error, res);
     }
@@ -226,7 +226,7 @@ solicitationRouter.routes.delete("/:id", validateToken, async (req, res) => {
 
         const deletedSolicitation = await solicitationService.execute({ id: Number(id) });
 
-        res.status(200).send(deletedSolicitation);
+        res.status(200).json(deletedSolicitation);
     } catch (error: any) {
         handleError(error, res);
     }

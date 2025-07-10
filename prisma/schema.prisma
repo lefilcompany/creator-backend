@@ -99,7 +99,7 @@ model Brand {
   influencersAction Int
   brandManual       Int
   createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @default(now())
+  updatedAt         DateTime?
   isDeleted         Int       @default(0)
 
   team     Team     @relation(fields: [teamId], references: [id])
@@ -153,7 +153,7 @@ model Persona {
   interestTrigger String  // Gatilhos de interesse
 
   createdAt      DateTime @default(now()) // Data de criação
-  updatedAt      DateTime @default(now()) // Data de atualização
+  updatedAt      DateTime?
   isDeleted      Int      @default(0)     // Exclusão lógica (0 = ativa)
 
   brand    Brand     @relation(fields: [brandId], references: [id]) // Marca relacionada
@@ -225,8 +225,8 @@ model Review {
 
 model TeamPlan {
   id        Int       @id @default(autoincrement()) // ID do relacionamento
-  teamId    Int
-  planId    Int
+  teamId    Int       @unique
+  planId    Int       @unique
   endDate   DateTime // Data de fim da assinatura
   createdAt DateTime  @default(now()) // Data de início da assinatura
   updatedAt DateTime? // Data de atualização

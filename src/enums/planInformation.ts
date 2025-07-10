@@ -1,0 +1,17 @@
+export enum PlanInformation {
+    NAME_REQUIRED = 'O nome do plano é obrigatório.',
+    PRICE_REQUIRED = 'O preço do plano é obrigatoriamente maior ou igual a zero.',
+    MEMBERS_LIMIT_REQUIRED = 'O limite de membros do plano é obrigatório.',
+    BRANDS_LIMIT_REQUIRED = 'O limite de marcas do plano é obrigatório.',
+    THEMES_LIMIT_REQUIRED = 'O limite de temas do plano é obrigatório.',
+    PERSONAS_LIMIT_REQUIRED = 'O limite de personas do plano é obrigatório.',
+    CONTENT_LIMIT_REQUIRED = 'O limite de conteúdo do plano é obrigatório.',
+    PLANNING_LIMIT_REQUIRED = 'O limite de planejamento do plano é obrigatório.',
+    REVIEW_LIMIT_REQUIRED = 'O limite de revisão do plano é obrigatório.',
+    PLAN_NOT_FOUND = 'Plano não encontrado.',
+    PLAN_ALREADY_EXISTS = 'Já existe um plano com este nome.',
+    PLAN_DELETED = 'Plano excluído com sucesso.',
+    PLAN_CREATED = 'Plano criado com sucesso.',
+    PLAN_UPDATED = 'Plano atualizado com sucesso.',
+    PLAN_ERROR_CREATE = 'Erro ao criar plano: ',
+}

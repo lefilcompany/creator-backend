@@ -35,7 +35,7 @@ class UserModel implements UserRoleValidator {
     ) {
         this.id = id;
 
-        if (!userName || userName.length < 3) {
+        if (!userName || userName.trim() === '') {
             throw new Error(UserInformation.USERNAME_REQUIRED);
         }
         this.userName = userName;

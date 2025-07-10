@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "Brand" ALTER COLUMN "updatedAt" DROP NOT NULL,
+ALTER COLUMN "updatedAt" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "Persona" ALTER COLUMN "updatedAt" DROP NOT NULL,
+ALTER COLUMN "updatedAt" DROP DEFAULT;
