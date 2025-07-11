@@ -28,9 +28,8 @@ export class UpdateSolicitationToCanceled implements Service {
     }
 
     public async execute({ solicitation, userId }: UpdateSolicitationToCanceledInput): Promise<UpdateSolicitationToCanceledOutput> {
-
-        if (!solicitation || solicitation.status !== SolicitationStatus.PENDING) {
-            throw new Error(SolicitationInformation.SOLICITATION_NOT_PENDING);
+        if (!solicitation) {
+            throw new Error(SolicitationInformation.SOLICITATION_NOT_FOUND);
         }
 
         const solicitationObj = new SolicitationModel(

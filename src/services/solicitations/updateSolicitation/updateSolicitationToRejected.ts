@@ -1,4 +1,4 @@
-import { SolicitationInformation } from "../../../enums/solicitationInformation";
+import { SolicitationInformation, SolicitationStatus } from "../../../enums/solicitationInformation";
 import SolicitationModel, { SolicitationModelInterface } from "../../../models/solicitationModel";
 import { SolicitationRepository } from "../../../repository/solicitationRepository";
 import { Service, ServiceInput, ServiceOutput } from "../../service";
@@ -29,8 +29,8 @@ export class UpdateSolicitationToRejected implements Service {
 
     public async execute({ solicitation, adminId }: UpdateSolicitationToRejectedInput): Promise<UpdateSolicitationToRejectedOutput> {
 
-        if (!solicitation || solicitation.status !== 0) {
-            throw new Error(SolicitationInformation.SOLICITATION_NOT_PENDING);
+        if (!solicitation) {
+            throw new Error(SolicitationInformation.SOLICITATION_NOT_FOUND);
         }
 
         const solicitationObj = new SolicitationModel(

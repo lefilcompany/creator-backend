@@ -114,9 +114,9 @@ export class SolicitationRepository {
     }
 
     public async rejectSolicitation(solicitation: SolicitationModel, adminTeamId: number) {
-        if (!solicitation || solicitation.getStatus() !== 0) {
-            throw new Error(SolicitationInformation.SOLICITATION_NOT_PENDING);
-        }
+        // if (!solicitation || solicitation.getStatus() !== 0) {
+        //     throw new Error(SolicitationInformation.SOLICITATION_NOT_PENDING);
+        // }
 
         const userRepository = UserRepository.get();
         const adminUser = await userRepository.getUserById(adminTeamId);
@@ -141,9 +141,9 @@ export class SolicitationRepository {
 
 
     public async cancelSolicitation(solicitation: SolicitationModel, userId: number) {
-        if (!solicitation || solicitation.getStatus() !== 0) {
-            throw new Error(SolicitationInformation.SOLICITATION_NOT_PENDING);
-        }
+        // if (!solicitation || solicitation.getStatus() !== 0) {
+        //     throw new Error(SolicitationInformation.SOLICITATION_NOT_PENDING);
+        // }
 
         if (solicitation.getUserId() !== userId) {
             throw new Error(SolicitationInformation.USER_IS_NOT_SOLICITATION_OWNER);
@@ -162,9 +162,9 @@ export class SolicitationRepository {
 
 
     public async expireSolicitation(solicitation: SolicitationModel) {
-        if (!solicitation || solicitation.getStatus() !== 0) {
-            throw new Error(SolicitationInformation.SOLICITATION_NOT_PENDING);
-        }
+        // if (!solicitation || solicitation.getStatus() !== 0) {
+        //     throw new Error(SolicitationInformation.SOLICITATION_NOT_PENDING);
+        // }
         const sevenDaysLater = addDays(solicitation.getCreatedAt()!, 7);
         const now = new Date();
 

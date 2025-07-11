@@ -11,8 +11,8 @@ export function handleError(error: any, res: any) {
         503: { error: 'Service Unavailable', message: 'Serviço indisponível' }
     };
 
-    const statusCode = error.status || error.statusCode || 500;
-    const errorInfo = errorMap[statusCode] || errorMap[500];
+    const statusCode = error.status || error.statusCode || 400;
+    const errorInfo = errorMap[statusCode] || errorMap[400];
 
     return res.status(statusCode).json({
         ...errorInfo,
