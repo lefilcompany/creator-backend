@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import PlanModel, { PlanModelInterface } from "../models/planModel";
-import { Decimal } from "@prisma/client/runtime/library";
 
 export class PlanRepository {
     private client: PrismaClient;
