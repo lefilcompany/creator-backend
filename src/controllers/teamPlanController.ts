@@ -10,6 +10,9 @@ import { UpdateTeamPlan } from "../services/teamPlan/updateTeamPlan";
 import { handleError } from "../utils/errorHandler";
 import { AppRoute } from "./AppRoute";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
 
 const teamPlanRoute = new AppRoute('teamPlan');
 
@@ -131,9 +134,10 @@ teamPlanRoute.routes.put("/:id", async (req, res) => {
     }
 });
 
-teamPlanRoute.routes.post("/renew", async (req, res) => {
+teamPlanRoute.routes.put("/renew/:teamId", async (req, res) => {
     try {
-        const { teamId, newEndDate } = req.body;
+        const { teamId } = req.params;
+        const { newEndDate } = req.body;
 
         if (!teamId || !newEndDate) {
             throw new Error(TeamPlanInformation.MISSING_REQUIRED_FIELDS);
@@ -147,7 +151,7 @@ teamPlanRoute.routes.post("/renew", async (req, res) => {
 
         const renewTeamPlanService = RenewTeamPlan.getInstance();
         const renewTeamPlan = await renewTeamPlanService.execute({
-            teamId,
+            teamId: Number(teamId),
             newEndDate: parsedNewEndDate
         });
 
