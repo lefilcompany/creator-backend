@@ -141,7 +141,7 @@ model Persona {
   teamId         Int
   name           String
   gender         String
-  age            String
+  age            Int
   location       String
   positionDegree String   // Cargo e formação acadêmica
   beliefs        String   // Crenças e interesses
