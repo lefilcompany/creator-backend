@@ -81,9 +81,9 @@ model Plan {
 
 model Brand {
   id                Int       @id @default(autoincrement())
-  name              String
-  teamId            Int
-  userId            Int
+  name              String    @unique
+  teamId            Int      
+  userId            Int       
   valueProposition  String    
   brandPillars      String
   brandMission      String

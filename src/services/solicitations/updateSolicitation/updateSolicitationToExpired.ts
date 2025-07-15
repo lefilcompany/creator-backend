@@ -27,7 +27,6 @@ export class UpdateSolicitationToExpired implements Service {
     }
 
     public async execute({ solicitation }: UpdateSolicitationToExpiredInput): Promise<UpdateSolicitationToExpiredOutput> {
-
         if (!solicitation || solicitation.status !== SolicitationStatus.PENDING) {
             throw new Error(SolicitationInformation.SOLICITATION_NOT_PENDING);
         }
